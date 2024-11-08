@@ -16,8 +16,13 @@
 
 int fontHeight = 16;
 
+typedef enum {
+    gui_button,
+    gui_text
+} gui_item_type;
+
 typedef struct {
-    uint8_t type;
+    gui_item_type type;
     uint16_t x;
     uint16_t y;
     uint16_t sizeX;
@@ -26,6 +31,7 @@ typedef struct {
     void (*callback) (HWND hwnd);
 } gui_object;
 
+#include "util.h"
 #include "gui.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -79,13 +85,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         for (uint8_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
             gui_object object = gui_objects[index];
             switch (object.type) {
-                case 0:
+                case gui_button:
                     SetTextAlign(hdc, TA_CENTER | TA_BOTTOM);
                     RoundRect(hdc, object.x, object.y, object.x + object.sizeX, object.y + object.sizeY, 15, 15);
                     TextOutA(hdc, object.x + (object.sizeX / 2), object.y + (object.sizeY / 2) + (fontHeight / 2), object.text, strlen(object.text));
                     break;
 
-                case 1:
+                case gui_text:
                     SetTextAlign(hdc, TA_TOP | TA_LEFT);
                     TextOutA(hdc, object.x, object.y, object.text, strlen(object.text));
                     break;
