@@ -5,17 +5,7 @@ void util_flush(HWND hwnd) {
     UpdateWindow(hwnd);
 }
 
-void util_filename(char* name, const char* path, size_t len) {
-    size_t ptr = 0;
-    for (size_t i = 0; i < len; i++) {
-        char chr = path[i];
-        if (chr == '/' || chr == '\\') {
-            ptr = 0;
-        } else if (chr == '\0') {
-            break;
-        } else {
-            name[ptr++] = path[i];
-        }
-    }
-    name[ptr++] = '\0';
+void util_filename(char* name, const char* path) {
+    const char* filename = max(strrchr(path, '\\'), strrchr(path, '/'));
+    strcpy(name, filename + 1);
 }

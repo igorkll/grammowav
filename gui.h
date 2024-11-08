@@ -17,7 +17,7 @@ void load_wav(HWND hwnd) {
 
     if (GetOpenFileNameA(&ofn)) {
         fileSelected = true;
-        util_filename(currentName, currentPath, APP_PATHLEN);
+        util_filename(currentName, currentPath);
         util_flush(hwnd);
     }
 }
