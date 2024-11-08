@@ -49,7 +49,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         int xPos = GET_X_LPARAM(lParam);
         int yPos = GET_Y_LPARAM(lParam);
 
-        for (uint8_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
+        for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
             gui_object object = gui_objects[index];
             if (object.callback && xPos >= object.x && yPos >= object.y && xPos < object.x + object.sizeX && yPos < object.y + object.sizeY) {
                 object.callback(hwnd);
@@ -83,7 +83,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         hPen = CreatePen(2, 2, RGB(0, 0, 255));
         SelectObject(hdc, hPen);
 
-        for (uint8_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
+        for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
             gui_object object = gui_objects[index];
             switch (object.type) {
                 case gui_button:

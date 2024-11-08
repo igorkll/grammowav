@@ -41,7 +41,15 @@ void save_stl(HWND hwnd) {
     ofn.nMaxFile = APP_PATHLEN;
 
     if (GetSaveFileNameA(&ofn)) {
-        grammowav_wavToStl(currentPath, savePath, 78, 12, 0.01, 0.01);
+        switch (grammowav_wavToStl(currentPath, savePath, 78, 12, 0.01, 0.01)) {
+            case 0:
+                MessageBoxA(hwnd, "the file was saved successfully", MB_OK, MB_OK);
+                break;
+
+            case 1:
+                MessageBoxA(hwnd, "first select the wav file", MB_OK, MB_ICONERROR);
+                break;
+        }
     }
 }
 
