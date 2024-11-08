@@ -40,8 +40,8 @@ void save_stl(HWND hwnd) {
     ofn.lpstrFile = savePath;
     ofn.nMaxFile = APP_PATHLEN;
 
-    if (GetOpenFileNameA(&ofn)) {
-        
+    if (GetSaveFileNameA(&ofn)) {
+        grammowav_wavToStl(currentPath, savePath, 78, 12, 0.01, 0.01);
     }
 }
 
