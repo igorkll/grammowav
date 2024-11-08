@@ -11,6 +11,8 @@ void util_filename(char* name, const char* path, size_t len) {
         char chr = path[i];
         if (chr == '/' || chr == '\\') {
             ptr = 0;
+        } else if (chr == '\0') {
+            break;
         } else {
             name[ptr++] = path[i];
         }

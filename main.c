@@ -32,6 +32,7 @@ typedef struct {
 } gui_object;
 
 #include "util.h"
+#include "grammowav.h"
 #include "gui.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {

@@ -130,6 +130,7 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="grammowav.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
