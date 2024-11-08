@@ -22,15 +22,18 @@ void load_wav(HWND hwnd) {
     }
 }
 
-void save_stl(HWND hwnd) {
-    if (!fileSelected) return;
 
-    char savePath[APP_PATHLEN];
+char savePath[APP_PATHLEN];
+void save_stl(HWND hwnd) {
+    if (!fileSelected) {
+        MessageBoxA(hwnd, "first select the wav file", MB_OK, MB_ICONERROR);
+        return;
+    }
 
     OPENFILENAMEA ofn = { 0 };
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = hwnd;
-    ofn.lpstrFilter = "sound file (*.wav)\0*.wav\0";
+    ofn.lpstrFilter = "stl record (*.stl)\0*.stl\0";
     ofn.lpstrTitle = NULL;
     ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
@@ -38,8 +41,7 @@ void save_stl(HWND hwnd) {
     ofn.nMaxFile = APP_PATHLEN;
 
     if (GetOpenFileNameA(&ofn)) {
-        int r = grammowav_wavToStl(currentPath, savePath, 78, 12, 0.1, 0.1);
-        MessageBoxA(hwnd, "QWE", MB_OK, MB_ICONSTOP);
+        
     }
 }
 
