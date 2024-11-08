@@ -7,7 +7,7 @@
 #include <windowsx.h>
 
 #define APP_NAME L"grammowav"
-#define APP_WIDTH 400
+#define APP_WIDTH 600
 #define APP_HEIGHT 400
 #define APP_PATHLEN 512
 #define APP_FONTSIZE 8
@@ -70,7 +70,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         SelectObject(hdc, hFont);
         SetBkColor(hdc, RGB(250, 200, 100));
         SetTextColor(hdc, RGB(0, 0, 255));
-        SetTextAlign(hdc, TA_CENTER | TA_BOTTOM);
 
         hBrush = CreateSolidBrush(RGB(250, 200, 100));
         SelectObject(hdc, hBrush);
@@ -81,12 +80,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             gui_object object = gui_objects[index];
             switch (object.type) {
                 case 0:
+                    SetTextAlign(hdc, TA_CENTER | TA_BOTTOM);
                     RoundRect(hdc, object.x, object.y, object.x + object.sizeX, object.y + object.sizeY, 15, 15);
                     TextOutA(hdc, object.x + (object.sizeX / 2), object.y + (object.sizeY / 2) + (fontHeight / 2), object.text, strlen(object.text));
                     break;
 
                 case 1:
-                    TextOutA(hdc, object.x + (object.sizeX / 2), object.y + (object.sizeY / 2) + (fontHeight / 2), object.text, strlen(object.text));
+                    SetTextAlign(hdc, TA_TOP | TA_LEFT);
+                    TextOutA(hdc, object.x, object.y, object.text, strlen(object.text));
                     break;
             }
         }

@@ -21,23 +21,37 @@ void load_wav(HWND hwnd) {
     }
 }
 
+void save_stl(HWND hwnd) {
+    
+}
+
 gui_object gui_objects[] = {
     {
-        .type = 1,
+        .type = 0,
         .x = 8,
+        .y = 8,
+        .sizeX = 100,
+        .sizeY = 25,
+        .text = "load wav",
+        .callback = load_wav
+    },
+    {
+        .type = 0,
+        .x = APP_WIDTH - 100 - 8 - 16,
+        .y = APP_HEIGHT - 25 - 8 - 40,
+        .sizeX = 100,
+        .sizeY = 25,
+        .text = "save stl",
+        .callback = save_stl
+    },
+    {
+        .type = 1,
+        .x = 100 + 8 + 8,
         .y = 8,
         .sizeX = APP_WIDTH - 16,
         .sizeY = APP_FONTSIZE,
         .text = currentPath
     },
-    {
-        .type = 0,
-        .x = 8,
-        .y = 30,
-        .sizeX = 100,
-        .sizeY = 25,
-        .text = "load wav",
-        .callback = load_wav
-    }
+    
     
 };
