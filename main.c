@@ -9,6 +9,8 @@
 #define APP_NAME L"grammowav"
 #define APP_WIDTH 400
 #define APP_HEIGHT 400
+#define APP_PATHLEN 512
+#define APP_FONTSIZE 8
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
@@ -21,24 +23,10 @@ typedef struct {
     uint16_t sizeX;
     uint16_t sizeY;
     const char* text;
-    void (*callback) ();
+    void (*callback) (HWND hwnd);
 } gui_object;
 
-void load_wav() {
-
-}
-
-gui_object gui_objects[] = {
-    {
-        .type = 0,
-        .x = 0,
-        .y = 0,
-        .sizeX = 160,
-        .sizeY = 80,
-        .text = "load wav",
-        .callback = load_wav
-    }
-};
+#include "gui.h"
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC hdc;
@@ -57,7 +45,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         for (uint8_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
             gui_object object = gui_objects[index];
             if (object.callback && xPos >= object.x && yPos >= object.y && xPos < object.x + object.sizeX && yPos < object.y + object.sizeY) {
-                object.callback();
+                object.callback(hwnd);
             }
         }
 
@@ -72,8 +60,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         lf.lfItalic = 0;
         lf.lfStrikeOut = 0;
         lf.lfUnderline = 0;
-        lf.lfWidth = 10;
-        lf.lfWeight = 15;
+        lf.lfWidth = APP_FONTSIZE;
+        lf.lfWeight = APP_FONTSIZE;
         lf.lfCharSet = DEFAULT_CHARSET;
         lf.lfPitchAndFamily = DEFAULT_PITCH;
         lf.lfEscapement = 0;
@@ -91,8 +79,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
         for (uint8_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
             gui_object object = gui_objects[index];
-            RoundRect(hdc, object.x, object.y, object.x + object.sizeX, object.y + object.sizeY, 15, 15);
-            TextOutA(hdc, object.x + (object.sizeX / 2), object.y + (object.sizeY / 2) + (fontHeight / 2), object.text, strlen(object.text));
+            switch (object.type) {
+                case 0:
+                    RoundRect(hdc, object.x, object.y, object.x + object.sizeX, object.y + object.sizeY, 15, 15);
+                    TextOutA(hdc, object.x + (object.sizeX / 2), object.y + (object.sizeY / 2) + (fontHeight / 2), object.text, strlen(object.text));
+                    break;
+
+                case 1:
+                    TextOutA(hdc, object.x + (object.sizeX / 2), object.y + (object.sizeY / 2) + (fontHeight / 2), object.text, strlen(object.text));
+                    break;
+            }
         }
 
         ValidateRect(hwnd, NULL);
