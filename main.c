@@ -75,12 +75,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
         hFont = CreateFontIndirect(&lf);
         SelectObject(hdc, hFont);
-        SetBkColor(hdc, RGB(250, 200, 100));
-        SetTextColor(hdc, RGB(0, 0, 255));
+        SetBkColor(hdc, RGB(255, 255, 255));
+        SetTextColor(hdc, RGB(0, 0, 0));
 
-        hBrush = CreateSolidBrush(RGB(250, 200, 100));
+        hBrush = CreateSolidBrush(RGB(255, 255, 255));
         SelectObject(hdc, hBrush);
-        hPen = CreatePen(2, 2, RGB(0, 0, 255));
+        hPen = CreatePen(0, 3, RGB(255, 0, 255));
         SelectObject(hdc, hPen);
 
         for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
@@ -88,7 +88,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             switch (object.type) {
                 case gui_button:
                     SetTextAlign(hdc, TA_CENTER | TA_BOTTOM);
-                    RoundRect(hdc, object.x, object.y, object.x + object.sizeX, object.y + object.sizeY, 15, 15);
+                    RoundRect(hdc, object.x, object.y, object.x + object.sizeX, object.y + object.sizeY, 8, 8);
                     TextOutA(hdc, object.x + (object.sizeX / 2), object.y + (object.sizeY / 2) + (fontHeight / 2), object.text, strlen(object.text));
                     break;
 
@@ -119,7 +119,7 @@ void initGraphic(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, i
         .cbWndExtra = 0,
         .lpszClassName = APP_NAME,
         .hInstance = hInstance,
-        .hbrBackground = GetSysColorBrush(COLOR_3DFACE),
+        .hbrBackground = CreateSolidBrush(RGB(96, 160, 200)),
         .lpszMenuName = NULL,
         .lpfnWndProc = WndProc,
         .hCursor = LoadCursor(NULL, IDC_ARROW),

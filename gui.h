@@ -84,7 +84,7 @@ gui_object gui_objects[] = {
     {
         .type = gui_text,
         .x = 100 + 8 + 8,
-        .y = 8,
+        .y = 12,
         .sizeX = APP_WIDTH - 16,
         .sizeY = APP_FONTSIZE,
         .text = currentName
