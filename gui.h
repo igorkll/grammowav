@@ -4,7 +4,7 @@ char currentPath[APP_PATHLEN];
 char currentName[APP_PATHLEN] = "select wav file";
 bool fileSelected = false;
 
-void load_wav(HWND hwnd) {
+void load_wav(gui_object* self, HWND hwnd) {
     OPENFILENAMEA ofn = { 0 };
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = hwnd;
@@ -18,13 +18,12 @@ void load_wav(HWND hwnd) {
     if (GetOpenFileNameA(&ofn)) {
         fileSelected = true;
         util_filename(currentName, currentPath);
-        util_flush(hwnd);
     }
 }
 
 
 char savePath[APP_PATHLEN];
-void save_stl(HWND hwnd) {
+void save_stl(gui_object* self, HWND hwnd) {
     if (!fileSelected) {
         MessageBoxA(hwnd, "first select the wav file", MB_OK, MB_ICONERROR);
         return;
@@ -88,5 +87,36 @@ gui_object gui_objects[] = {
         .sizeX = APP_WIDTH - 16,
         .sizeY = APP_FONTSIZE,
         .text = currentName
+    },
+    {
+        .type = gui_checkbox,
+        .x = 8,
+        .y = 40,
+        .sizeX = 16,
+        .sizeY = 16,
+        .text = "78 RPM",
+        .disableEnable = true,
+        .disableId = 1,
+        .state = true
+    },
+    {
+        .type = gui_checkbox,
+        .x = 8,
+        .y = 40 + 16 + 4,
+        .sizeX = 16,
+        .sizeY = 16,
+        .text = "45 RPM",
+        .disableEnable = true,
+        .disableId = 1
+    },
+    {
+        .type = gui_checkbox,
+        .x = 8,
+        .y = 40 + ((16 + 4) * 2),
+        .sizeX = 16,
+        .sizeY = 16,
+        .text = "33 RPM",
+        .disableEnable = true,
+        .disableId = 1
     }
 };
