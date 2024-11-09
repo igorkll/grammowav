@@ -89,72 +89,131 @@ gui_object gui_objects[] = {
         .text = currentName
     },
     {
-        .type = gui_checkbox,
+        .type = gui_image,
+        .x = 4,
+        .y = APP_HEIGHT - 255 - 4,
+        .sizeX = 256,
+        .sizeY = 256,
+
+        .id = 0
+    },
+
+    // RPM SELECTOR
+    {
+        .type = gui_text,
         .x = 8,
-        .y = 40,
+        .y = 45,
+        .sizeY = 16,
+        .text = "rotation speed",
+    },
+    {
+        .type = gui_checkbox,
+        .x = 0,
+        .y = 8,
         .sizeX = 16,
         .sizeY = 16,
         .text = "78 RPM",
+        .data = 78,
+        .state = true,
+
         .onceEnable = true,
         .onceId = 1,
-        .state = true,
-        .data = 78
+
+        .offset = true,
+        .offsetSizeY = true
     },
     {
         .type = gui_checkbox,
-        .x = 8,
-        .y = 40 + 16 + 4,
+        .x = 0,
+        .y = 4,
         .sizeX = 16,
         .sizeY = 16,
         .text = "45 RPM",
+        .data = 45,
+        
         .onceEnable = true,
         .onceId = 1,
-        .data = 45
+        
+        .offset = true,
+        .offsetSizeY = true
     },
     {
         .type = gui_checkbox,
-        .x = 8,
-        .y = 40 + ((16 + 4) * 2),
+        .x = 0,
+        .y = 4,
         .sizeX = 16,
         .sizeY = 16,
         .text = "33 RPM",
+        .data = 33,
+
         .onceEnable = true,
         .onceId = 1,
-        .data = 33
-    },
 
+        .offset = true,
+        .offsetSizeY = true
+    },
     {
         .type = gui_checkbox,
-        .x = 8 + 100,
-        .y = 40,
+        .x = 0,
+        .y = 4,
+        .sizeX = 16,
+        .sizeY = 16,
+        .text = NULL,
+        .data = 33,
+
+        .onceEnable = true,
+        .onceId = 1,
+
+        .offset = true,
+        .offsetSizeY = true
+    },
+
+    // track width selection
+    {
+        .type = gui_text,
+        .x = 8 + 120,
+        .y = 45,
+        .sizeY = 16,
+        .text = "track width",
+    },
+    {
+        .type = gui_checkbox,
+        .x = 0,
+        .y = 8,
         .sizeX = 16,
         .sizeY = 16,
         .text = "140 microns",
         .onceEnable = true,
         .onceId = 2,
+        .offset = true,
+        .offsetSizeY = true,
         .state = true,
         .data = 140
     },
     {
         .type = gui_checkbox,
-        .x = 8 + 100,
-        .y = 40 + 16 + 4,
+        .x = 0,
+        .y = 4,
         .sizeX = 16,
         .sizeY = 16,
         .text = "55 microns",
+        .offset = true,
+        .offsetSizeY = true,
         .onceEnable = true,
         .onceId = 2,
         .data = 55
-    }/*,
-
+    },
     {
         .type = gui_checkbox,
-        .x = 8 + 100,
-        .y = 40,
+        .x = 0,
+        .y = 4,
         .sizeX = 16,
         .sizeY = 16,
-        .text = "",
-        .flipFlop = true
+        .text = NULL,
+        .offset = true,
+        .offsetSizeY = true,
+        .onceEnable = true,
+        .onceId = 2,
+        .data = 55
     }
-    */
 };

@@ -19,7 +19,8 @@ int fontHeight = 16;
 typedef enum {
     gui_button,
     gui_text,
-    gui_checkbox
+    gui_checkbox,
+    gui_image
 } gui_item_type;
 
 typedef struct gui_object gui_object;
@@ -34,11 +35,15 @@ struct gui_object {
 
     bool state;
     bool flipFlop;
+    bool offset;
+    bool offsetSizeX;
+    bool offsetSizeY;
 
-    bool onceEnable;    
+    bool onceEnable;
     int onceId;
 
     int data;
+    int id;
 };
 
 #include "util.h"
@@ -51,6 +56,7 @@ HBRUSH uncheckedBrush;
 HBRUSH objBrush;
 HPEN framePen;
 HFONT hFont;
+HBITMAP images[1];
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC hdc;
@@ -128,11 +134,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         .bottom = object->y + (object->sizeY - 3)
                     };
                     FillRect(hdc, &rect2, object->state ? checkedBrush : uncheckedBrush);
-                    SelectObject(hdc, objBrush);
-                    SetTextAlign(hdc, TA_TOP | TA_LEFT);
-                    TextOutA(hdc, object->x + (object->sizeX - 1) + 8, object->y, object->text, strlen(object->text));
+                    if (object->text) {
+                        SelectObject(hdc, objBrush);
+                        SetTextAlign(hdc, TA_TOP | TA_LEFT);
+                        TextOutA(hdc, object->x + (object->sizeX - 1) + 8, object->y, object->text, strlen(object->text));
+                    }
                     break;
                 }
+
+                case gui_image: {
+                    HBITMAP hBitmap = images[object->id];
+                    BITMAP bitmap;
+                    GetObject(hBitmap, sizeof(bitmap), &bitmap);
+                    HDC hdcMem = CreateCompatibleDC(hdc);
+                    SelectObject(hdcMem, hBitmap);
+                    BitBlt(hdc, 0, 0, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
+                    DeleteDC(hdcMem);
+                    break;
+                }
+
+                                 
             }
         }
 
@@ -195,6 +216,20 @@ void initGraphic(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, i
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+    images[0] = LoadImageA(hInstance, "grammowav.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+    gui_object* previous = NULL;
+    for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
+        gui_object* object = &gui_objects[index];
+        if (object->offset) {
+            object->x += previous->x;
+            object->y += previous->y;
+            if (object->offsetSizeX) object->x += previous->sizeX;
+            if (object->offsetSizeY) object->y += previous->sizeY;
+        }
+        previous = object;
+    }
+
     initGraphic(hInstance, hPrevInstance, pCmdLine, nCmdShow);
 
     MSG msg;
