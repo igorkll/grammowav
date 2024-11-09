@@ -33,7 +33,9 @@ struct gui_object {
     void (*callback) (gui_object* self, HWND hwnd);
     bool state;
     bool disableEnable;
+    bool flipFlop;
     int disableId;
+    int data;
 };
 
 #include "util.h"
@@ -68,7 +70,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         }
                     }
                 }
-                object->state = true;
+                if (object->flipFlop) {
+                    object->state = !object->state;
+                } else {
+                    object->state = true;
+                }
                 if (object->callback) object->callback(object, hwnd);
                 util_flush(hwnd);
             }
@@ -155,9 +161,9 @@ void initGraphic(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, i
 
     hFont = CreateFontIndirect(&lf);
     objBrush = CreateSolidBrush(RGB(255, 255, 255));
-    checkboxBrush = CreateSolidBrush(RGB(255, 255, 255));
-    checkedBrush = CreateSolidBrush(RGB(255, 0, 0));
-    uncheckedBrush = CreateSolidBrush(RGB(0, 0, 200));
+    checkboxBrush = CreateSolidBrush(RGB(0, 0, 0));
+    checkedBrush = CreateSolidBrush(RGB(0, 240, 0));
+    uncheckedBrush = CreateSolidBrush(RGB(0, 80, 0));
     framePen = CreatePen(0, 3, RGB(255, 0, 255));
 
 

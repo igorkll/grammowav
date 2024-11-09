@@ -97,7 +97,8 @@ gui_object gui_objects[] = {
         .text = "78 RPM",
         .disableEnable = true,
         .disableId = 1,
-        .state = true
+        .state = true,
+        .data = 78
     },
     {
         .type = gui_checkbox,
@@ -107,7 +108,8 @@ gui_object gui_objects[] = {
         .sizeY = 16,
         .text = "45 RPM",
         .disableEnable = true,
-        .disableId = 1
+        .disableId = 1,
+        .data = 45
     },
     {
         .type = gui_checkbox,
@@ -117,6 +119,42 @@ gui_object gui_objects[] = {
         .sizeY = 16,
         .text = "33 RPM",
         .disableEnable = true,
-        .disableId = 1
+        .disableId = 1,
+        .data = 33
+    },
+
+    {
+        .type = gui_checkbox,
+        .x = 8 + 100,
+        .y = 40,
+        .sizeX = 16,
+        .sizeY = 16,
+        .text = "140 microns",
+        .disableEnable = true,
+        .disableId = 2,
+        .state = true,
+        .data = 140
+    },
+    {
+        .type = gui_checkbox,
+        .x = 8 + 100,
+        .y = 40 + 16 + 4,
+        .sizeX = 16,
+        .sizeY = 16,
+        .text = "55 microns",
+        .disableEnable = true,
+        .disableId = 2,
+        .data = 55
+    }/*,
+
+    {
+        .type = gui_checkbox,
+        .x = 8 + 100,
+        .y = 40,
+        .sizeX = 16,
+        .sizeY = 16,
+        .text = "",
+        .flipFlop = true
     }
+    */
 };
