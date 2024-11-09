@@ -46,7 +46,7 @@ void save_stl(HWND hwnd) {
                 MessageBoxA(hwnd, "the file was saved successfully", MB_OK, MB_OK);
                 break;
 
-            case 1:
+            default:
                 MessageBoxA(hwnd, "first select the wav file", MB_OK, MB_ICONERROR);
                 break;
         }

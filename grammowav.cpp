@@ -41,6 +41,9 @@ extern "C" int grammowav_wavToStl(const char* path, const char* exportPath, doub
 	FILE* file = fopen(path, "rb");
 	if (file == NULL) return 1;
 
+	FILE* outputfile = fopen(exportPath, "wb");
+	if (outputfile == NULL) return 2;
+
 	char chunkId[4];
 	fread(chunkId, 1, 4, file);
 
@@ -98,10 +101,18 @@ extern "C" int grammowav_wavToStl(const char* path, const char* exportPath, doub
 			sample += convertSample(datapart, rate, false);
 		}
 		sample /= numChannels;
+
+		char buffer[32];
+		_itoa(((sample + 1.0) / 2.0) * 255, buffer, 10);
+		fwrite(buffer, 1, strlen(buffer), outputfile);
+		fwrite("\n", 1, 1, outputfile);
 		
 		currentOffset += rate * numChannels;
 		if (currentOffset >= fileSize) break;
 	}
+
+	fclose(file);
+	fclose(outputfile);
 
 	return 0;
 }
