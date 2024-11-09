@@ -95,8 +95,8 @@ gui_object gui_objects[] = {
         .sizeX = 16,
         .sizeY = 16,
         .text = "78 RPM",
-        .disableEnable = true,
-        .disableId = 1,
+        .onceEnable = true,
+        .onceId = 1,
         .state = true,
         .data = 78
     },
@@ -107,8 +107,8 @@ gui_object gui_objects[] = {
         .sizeX = 16,
         .sizeY = 16,
         .text = "45 RPM",
-        .disableEnable = true,
-        .disableId = 1,
+        .onceEnable = true,
+        .onceId = 1,
         .data = 45
     },
     {
@@ -118,8 +118,8 @@ gui_object gui_objects[] = {
         .sizeX = 16,
         .sizeY = 16,
         .text = "33 RPM",
-        .disableEnable = true,
-        .disableId = 1,
+        .onceEnable = true,
+        .onceId = 1,
         .data = 33
     },
 
@@ -130,8 +130,8 @@ gui_object gui_objects[] = {
         .sizeX = 16,
         .sizeY = 16,
         .text = "140 microns",
-        .disableEnable = true,
-        .disableId = 2,
+        .onceEnable = true,
+        .onceId = 2,
         .state = true,
         .data = 140
     },
@@ -142,8 +142,8 @@ gui_object gui_objects[] = {
         .sizeX = 16,
         .sizeY = 16,
         .text = "55 microns",
-        .disableEnable = true,
-        .disableId = 2,
+        .onceEnable = true,
+        .onceId = 2,
         .data = 55
     }/*,
 

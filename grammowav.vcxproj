@@ -129,7 +129,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="grammowav.cpp" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>

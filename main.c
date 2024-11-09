@@ -31,10 +31,13 @@ struct gui_object {
     uint16_t sizeY;
     const char* text;
     void (*callback) (gui_object* self, HWND hwnd);
+
     bool state;
-    bool disableEnable;
     bool flipFlop;
-    int disableId;
+
+    bool onceEnable;    
+    int onceId;
+
     int data;
 };
 
@@ -62,10 +65,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
             gui_object* object = &gui_objects[index];
             if (xPos >= object->x && yPos >= object->y && xPos < object->x + object->sizeX && yPos < object->y + object->sizeY) {
-                if (object->disableEnable) {
+                if (object->onceEnable) {
                     for (size_t index2 = 0; index2 < ARRAY_SIZE(gui_objects); index2++) {
                         gui_object* object2 = &gui_objects[index2];
-                        if (object2->disableEnable && index2 != index && object2->disableId == object->disableId) {
+                        if (object2->onceEnable && index2 != index && object2->onceId == object->onceId) {
                             object2->state = false;
                         }
                     }
