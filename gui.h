@@ -46,9 +46,18 @@ void save_stl(HWND hwnd) {
                 MessageBoxA(hwnd, "the file was saved successfully", MB_OK, MB_OK);
                 break;
 
-            default:
-                MessageBoxA(hwnd, "first select the wav file", MB_OK, MB_ICONERROR);
+            case 1:
+                MessageBoxA(hwnd, "the wav file could not be opened", MB_OK, MB_ICONERROR);
                 break;
+
+            case 2:
+                MessageBoxA(hwnd, "the stl file could not be saved", MB_OK, MB_ICONERROR);
+                break;
+
+            case 3:
+                MessageBoxA(hwnd, "the beginning of the audio data could not be found", MB_OK, MB_ICONERROR);
+                break;
+
         }
     }
 }

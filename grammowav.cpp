@@ -42,7 +42,10 @@ extern "C" int grammowav_wavToStl(const char* path, const char* exportPath, doub
 	if (file == NULL) return 1;
 
 	FILE* outputfile = fopen(exportPath, "wb");
-	if (outputfile == NULL) return 2;
+	if (outputfile == NULL) {
+		fclose(file);
+		return 2;
+	}
 
 	char chunkId[4];
 	fread(chunkId, 1, 4, file);
@@ -84,10 +87,15 @@ extern "C" int grammowav_wavToStl(const char* path, const char* exportPath, doub
 	fread(&offset, 4, 1, file);
 
 	size_t rate = bitsPerSample / 8;
-	if (strcmp(subchunk2Id, "data") != 0) {
+	if (memcmp(subchunk2Id, "data", 4) != 0) {
 		fseek(file, offset, SEEK_CUR);
 		char title[4];
 		fread(&title, 1, 4, file);
+		if (memcmp(title, "data", 4) != 0) {
+			fclose(file);
+			fclose(outputfile);
+			return 3;
+		}
 		fread(&offset, 4, 1, file);
 	}
 	size_t fileSize = offset;
