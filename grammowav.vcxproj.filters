@@ -32,10 +32,22 @@
     <ClInclude Include="microstl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="grammowav.bmp">
+    <None Include="IDI_ICON1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="grammowav.rc">
       <Filter>Resource Files</Filter>
-    </Image>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

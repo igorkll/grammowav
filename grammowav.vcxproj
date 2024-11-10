@@ -135,10 +135,16 @@
     <ClInclude Include="grammowav.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="microstl.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="resource2.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="grammowav.bmp" />
+    <None Include="IDI_ICON1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="grammowav.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
