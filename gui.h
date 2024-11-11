@@ -22,7 +22,7 @@ void load_wav(gui_object* self, HWND hwnd) {
 }
 
 char savePath[APP_PATHLEN];
-void save_stl(gui_object* self, HWND hwnd) {
+void save_gcode(gui_object* self, HWND hwnd) {
     if (!fileSelected) {
         MessageBoxA(hwnd, "first select the wav file", MB_OK, MB_ICONERROR);
         return;
@@ -31,7 +31,7 @@ void save_stl(gui_object* self, HWND hwnd) {
     OPENFILENAMEA ofn = { 0 };
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = hwnd;
-    ofn.lpstrFilter = "stl record (*.stl)\0*.stl\0";
+    ofn.lpstrFilter = "gcode record (*.gcode)\0*.gcode\0";
     ofn.lpstrTitle = NULL;
     ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
@@ -39,7 +39,27 @@ void save_stl(gui_object* self, HWND hwnd) {
     ofn.nMaxFile = APP_PATHLEN;
 
     if (GetSaveFileNameA(&ofn)) {
-        switch (grammowav_wavToStl(currentPath, savePath, 78, 12, 0.01, 0.01)) {
+        printer_t printer = {
+            .nozzleTemperature = 215,
+            .bedTemperature = 65,
+
+            .widthX = 220,
+            .depthY = 220,
+            .heightZ = 250,
+            .zOffset = 0,
+
+            .nozzleDiameter = 0.4,
+            .filamentDiameter = 1.75
+        };
+
+        disk_t disk = {
+            .rpm = 78,
+            .diskSize = 12,
+            .trackWidth = 0.1,
+            .trackAmplitude = 0.05
+        };
+
+        switch (grammowav_wavToGcode(currentPath, savePath, printer, disk)) {
             case 0:
                 MessageBoxA(hwnd, "the file was saved successfully", MB_OK, MB_OK);
                 break;
@@ -76,8 +96,8 @@ gui_object gui_objects[] = {
         .y = APP_HEIGHT - 25 - 8 - 40,
         .sizeX = 100,
         .sizeY = 25,
-        .text = "save stl",
-        .callback = save_stl
+        .text = "save gcode",
+        .callback = save_gcode
     },
     {
         .type = gui_text,

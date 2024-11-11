@@ -29,16 +29,27 @@ static double convertSample(uint8_t* datapart, size_t size, bool signedInt) {
 	return 0;
 }
 
-int grammowav_wavToStl(const char* path, const char* exportPath, double rpm, double diskSize, double trackWidth, double trackAmplitude) {
-	/*
-	microstl::MeshWriterHandler handler;
-	microstl::MeshProvider provider();
-	microstl::Result result = microstl::Writer::writeStlFile(exportPath, provider);
-	if (result != microstl::Result::Success) {
-		return 1;
-	}
-	*/
+typedef struct {
+	int nozzleTemperature;
+	int bedTemperature;
 
+	int widthX;
+	int depthY;
+	int heightZ;
+	double zOffset;
+
+	double nozzleDiameter;
+	double filamentDiameter;
+} printer_t;
+
+typedef struct {
+	double rpm;
+	double diskSize;
+	double trackWidth;
+	double trackAmplitude;
+} disk_t;
+
+int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t printer, disk_t disk) {
 	FILE* file = fopen(path, "rb");
 	if (file == NULL) return 1;
 
@@ -113,7 +124,7 @@ int grammowav_wavToStl(const char* path, const char* exportPath, double rpm, dou
 
 		char buffer[32];
 		_itoa(((sample + 1.0) / 2.0) * 255, buffer, 10);
-		fwrite(buffer, 1, strlen(buffer), outputfile);
+		//fwrite(buffer, 1, strlen(buffer), outputfile);
 		fwrite("\n", 1, 1, outputfile);
 
 		currentOffset += rate * numChannels;
