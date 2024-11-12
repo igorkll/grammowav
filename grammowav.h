@@ -119,17 +119,26 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	util_writeln(outputfile, "G90"); //use absolute coordinates
 	util_writeln(outputfile, "M83"); //extruder relative mode
 
-	util_write(outputfile, "M140 S"); //set bed temp
-	util_writeNumberln(outputfile, printer.bedTemperature);
-	util_write(outputfile, "M190 S"); //wait for bed temp
-	util_writeNumberln(outputfile, printer.bedTemperature);
+	if (printer.bedTemperature > 0) {
+		util_write(outputfile, "M140 S"); //set bed temp
+		util_writeNumberln(outputfile, printer.bedTemperature);
+	}
+	if (printer.nozzleTemperature > 0) {
+		util_write(outputfile, "M104 S"); //set extruder temp
+		util_writeNumberln(outputfile, printer.nozzleTemperature);
+	}
 
-	util_write(outputfile, "M104 S"); //set extruder temp
-	util_writeNumberln(outputfile, printer.nozzleTemperature);
-	util_write(outputfile, "M109 S"); //wait for extruder temp
-	util_writeNumberln(outputfile, printer.nozzleTemperature);
+	if (printer.bedTemperature > 0) {
+		util_write(outputfile, "M190 S"); //wait for bed temp
+		util_writeNumberln(outputfile, printer.bedTemperature);
+	}
+	if (printer.nozzleTemperature > 0) {
+		util_write(outputfile, "M109 S"); //wait for extruder temp
+		util_writeNumberln(outputfile, printer.nozzleTemperature);
+	}
 
 	util_writeln(outputfile, "G28");
+	util_writeMove(outputfile, printer.widthX / 2, printer.depthY / 2); //перемещяю башку в центр
 
 	size_t currentOffset = 0;
 	uint8_t datapart[4];
@@ -153,8 +162,12 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	util_writeln(outputfile, "G1 X5 Y209 F18000"); //present print
 	util_writeln(outputfile, "G1 Z72 F600"); //Move print head further up
 	util_writeln(outputfile, "G1 Z150 F600"); //Move print head further up
-	util_writeln(outputfile, "M140 S0"); //turn off heatbed
-	util_writeln(outputfile, "M104 S0"); //turn off temperature
+	if (printer.bedTemperature > 0) {
+		util_writeln(outputfile, "M140 S0"); //turn off heatbed
+	}
+	if (printer.nozzleTemperature > 0) {
+		util_writeln(outputfile, "M104 S0"); //turn off temperature
+	}
 	util_writeln(outputfile, "M107"); //turn off fan
 	util_writeln(outputfile, "M84"); //disable motors
 

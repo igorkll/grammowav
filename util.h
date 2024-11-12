@@ -33,3 +33,10 @@ void util_writeNumberln(FILE* file, int number) {
     util_writeNumber(file, number);
     util_ln(file);
 }
+
+void util_writeMove(FILE* outputfile, int x, int y) {
+    util_write(outputfile, "G0 X");
+    util_writeNumber(outputfile, x);
+    util_write(outputfile, " Y");
+    util_writeNumberln(outputfile, y);
+}
