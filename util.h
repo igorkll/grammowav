@@ -34,9 +34,28 @@ void util_writeNumberln(FILE* file, int number) {
     util_ln(file);
 }
 
-void util_writeMove(FILE* outputfile, int x, int y) {
+void util_writeDouble(FILE* file, double number) {
+    char buffer[16];
+    sprintf(buffer, "%lf", number);
+    util_write(file, buffer);
+}
+
+void util_writeDoubleln(FILE* file, double number) {
+    util_writeDouble(file, number);
+    util_ln(file);
+}
+
+void util_writeMove(FILE* outputfile, double x, double y, double z, int speed) {
     util_write(outputfile, "G0 X");
-    util_writeNumber(outputfile, x);
+    util_writeDouble(outputfile, x);
     util_write(outputfile, " Y");
-    util_writeNumberln(outputfile, y);
+    util_writeDouble(outputfile, y);
+    util_write(outputfile, " Z");
+    util_writeDouble(outputfile, z);
+    util_write(outputfile, " F");
+    util_writeNumberln(outputfile, speed);
+}
+
+int util_convertSpeed(int speed) {
+    return speed * 10 * 60;
 }

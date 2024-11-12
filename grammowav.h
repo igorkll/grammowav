@@ -40,9 +40,6 @@ typedef struct {
 
 	double nozzleDiameter;
 	double filamentDiameter;
-
-	char start_gcode[32 * 1024];
-	char end_gcode[32 * 1024];
 } printer_t;
 
 typedef struct {
@@ -122,23 +119,18 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	if (printer.bedTemperature > 0) {
 		util_write(outputfile, "M140 S"); //set bed temp
 		util_writeNumberln(outputfile, printer.bedTemperature);
-	}
-	if (printer.nozzleTemperature > 0) {
-		util_write(outputfile, "M104 S"); //set extruder temp
-		util_writeNumberln(outputfile, printer.nozzleTemperature);
-	}
-
-	if (printer.bedTemperature > 0) {
 		util_write(outputfile, "M190 S"); //wait for bed temp
 		util_writeNumberln(outputfile, printer.bedTemperature);
 	}
 	if (printer.nozzleTemperature > 0) {
+		util_write(outputfile, "M104 S"); //set extruder temp
+		util_writeNumberln(outputfile, printer.nozzleTemperature);
 		util_write(outputfile, "M109 S"); //wait for extruder temp
 		util_writeNumberln(outputfile, printer.nozzleTemperature);
 	}
 
 	util_writeln(outputfile, "G28");
-	util_writeMove(outputfile, printer.widthX / 2, printer.depthY / 2); //перемещяю башку в центр
+	util_writeMove(outputfile, printer.widthX / 2, printer.depthY / 2, 0, util_convertSpeed(3)); //перемещяю башку в центр
 
 	size_t currentOffset = 0;
 	uint8_t datapart[4];
@@ -150,9 +142,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		}
 		sample /= numChannels;
 
-		char buffer[32];
-		_itoa(((sample + 1.0) / 2.0) * 255, buffer, 10);
-		//fwrite(buffer, 1, strlen(buffer), outputfile);
+		util_writeMove(outputfile, printer.widthX / 2, (printer.depthY / 2) + (sample * 5), 0, util_convertSpeed(10));
 
 		currentOffset += rate * numChannels;
 		if (currentOffset >= fileSize) break;
