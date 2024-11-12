@@ -45,17 +45,20 @@ void util_writeDoubleln(FILE* file, double number) {
     util_ln(file);
 }
 
-void util_writeMove(FILE* outputfile, double x, double y, double z, int speed) {
+void util_writeMove(FILE* outputfile, double x, double y, double z) {
     util_write(outputfile, "G0 X");
     util_writeDouble(outputfile, x);
     util_write(outputfile, " Y");
     util_writeDouble(outputfile, y);
     util_write(outputfile, " Z");
-    util_writeDouble(outputfile, z);
-    util_write(outputfile, " F");
-    util_writeNumberln(outputfile, speed);
+    util_writeDoubleln(outputfile, z);
 }
 
 int util_convertSpeed(int speed) {
     return speed * 10 * 60;
+}
+
+void util_writeSpeed(FILE* outputfile, int speed) {
+    util_write(outputfile, "G0 F");
+    util_writeDoubleln(outputfile, speed);
 }

@@ -129,7 +129,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		util_writeNumberln(outputfile, printer.nozzleTemperature);
 	}
 
-	util_writeln(outputfile, "G28");
+	//util_writeln(outputfile, "G28");
 	util_writeSpeed(outputfile, util_convertSpeed(10));
 	util_writeMove(outputfile, printer.widthX / 2, printer.depthY / 2, 0); //перемещяю башку в центр
 	util_writeSpeed(outputfile, util_convertSpeed(30));
