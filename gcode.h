@@ -1,6 +1,6 @@
 #pragma once
 
-#define _GCODE_MUL 1.1
+#define _GCODE_MUL 1
 
 bool gcode_extrusion = false;
 double _gcode_currentX = 0;
