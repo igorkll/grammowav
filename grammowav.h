@@ -112,23 +112,23 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_fan(outputfile, printer, 200);
 	
 	// даю экструдеру пропердеться
-	gcode_speed(outputfile, printer, util_convertSpeed(10));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
 	gcode_move(outputfile, printer, 50, 20, 0);
-	gcode_speed(outputfile, printer, util_convertSpeed(5));
-	gcode_extrusion(true, 10);
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 5));
+	gcode_extrusion = true;
 	gcode_move(outputfile, printer, printer.widthX - 50, 20, 0);
-	gcode_extrusion(false, 0);
+	gcode_extrusion = false;
 
 	// перемещяю башку в центр
-	gcode_speed(outputfile, printer, util_convertSpeed(10));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
 	gcode_moveC(outputfile, printer, 0, 0, 0);
 
 	// начинаю фигачить диск
-	gcode_speed(outputfile, printer, util_convertSpeed(5));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 5));
 	gcode_moveC(outputfile, printer, 50, 0, 0);
-	gcode_extrusion(true, 10);
+	gcode_extrusion = true;
 	gcode_moveC(outputfile, printer, 0, 50, 0);
-	gcode_extrusion(false, 0);
+	gcode_extrusion = false;
 
 	size_t currentOffset = 0;
 	uint8_t datapart[4];
@@ -146,7 +146,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		if (currentOffset >= fileSize) break;
 	}
 
-	gcode_speed(outputfile, printer, util_convertSpeed(10));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
 	gcode_move(outputfile, printer, 0, printer.depthY, 50);
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed

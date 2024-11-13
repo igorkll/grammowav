@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <windowsx.h>
+#include <math.h>
 
 #define APP_NAME L"grammowav"
 #define APP_WIDTH 600
@@ -57,6 +58,7 @@ typedef struct {
 
     double nozzleDiameter;
     double filamentDiameter;
+    double extrusionMultiplier;
 } printer_t;
 
 typedef struct {

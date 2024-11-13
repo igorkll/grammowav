@@ -1,21 +1,22 @@
 #pragma once
 
-bool _gcode_extrusion_state = false;
-double _gcode_extrusion_value;
-
-void gcode_extrusion(bool state, double value) {
-    _gcode_extrusion_state = state;
-    _gcode_extrusion_value = value;
-}
+bool gcode_extrusion = false;
+double _gcode_currentX = 0;
+double _gcode_currentY = 0;
+double _gcode_currentZ = 0;
 
 void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double z) {
     z += printer.zOffset;
-    if (_gcode_extrusion_state) {
-        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, _gcode_extrusion_value);
+    if (gcode_extrusion) {
+        double dist = util_dist(x, y, z, _gcode_currentX, _gcode_currentY, _gcode_currentZ);
+        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, dist * printer.extrusionMultiplier);
     } else {
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z + 10);
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
     }
+    _gcode_currentX = x;
+    _gcode_currentY = y;
+    _gcode_currentZ = z;
 }
 
 void gcode_moveC(FILE* outputfile, printer_t printer, double x, double y, double z) {
