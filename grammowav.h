@@ -125,10 +125,12 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	// начинаю фигачить диск
 	gcode_extrusion = true;
 	for (double i = 0; i < 10; i += printer.layerThickness) {
-		gcode_moveC(outputfile, printer, 50, 0, i);
-		gcode_moveC(outputfile, printer, 50, 50, i);
-		gcode_moveC(outputfile, printer, 0, 50, i);
-		gcode_moveC(outputfile, printer, 0, 0, i);
+		for (double j = 0; j < 10; j += printer.nozzleDiameter) {
+			gcode_moveC(outputfile, printer, 50 - j, j, i);
+			gcode_moveC(outputfile, printer, 50 - j, 50 - j, i);
+			gcode_moveC(outputfile, printer, j, 50 - j, i);
+			gcode_moveC(outputfile, printer, j, j, i);
+		}
 	}
 	gcode_extrusion = false;
 
