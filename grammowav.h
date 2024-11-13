@@ -29,26 +29,6 @@ static double convertSample(uint8_t* datapart, size_t size, bool signedInt) {
 	return 0;
 }
 
-typedef struct {
-	int nozzleTemperature;
-	int bedTemperature;
-
-	int widthX;
-	int depthY;
-	int heightZ;
-	double zOffset;
-
-	double nozzleDiameter;
-	double filamentDiameter;
-} printer_t;
-
-typedef struct {
-	double rpm;
-	double diskSize;
-	double trackWidth;
-	double trackAmplitude;
-} disk_t;
-
 int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t printer, disk_t disk) {
 	FILE* file = fopen(path, "rb");
 	if (file == NULL) return 1;
@@ -126,9 +106,14 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 
 	fprintf(outputfile, "G28\n");
-	gcode_writeSpeed(outputfile, util_convertSpeed(10));
-	gcode_writeMove(outputfile, printer.widthX / 2, printer.depthY / 2, 0); //перемещяю башку в центр
-	gcode_writeSpeed(outputfile, util_convertSpeed(30));
+	gcode_speed(outputfile, printer, util_convertSpeed(10));
+	gcode_moveC(outputfile, printer, 0, 0, 0); //перемещяю башку в центр
+	gcode_speed(outputfile, printer, util_convertSpeed(5));
+
+	gcode_moveC(outputfile, printer, 50, 0, 0);
+	gcode_extrusion(true, 10);
+	gcode_moveC(outputfile, printer, 0, 50, 0);
+	gcode_extrusion(false, 0);
 
 	size_t currentOffset = 0;
 	uint8_t datapart[4];
@@ -146,8 +131,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		if (currentOffset >= fileSize) break;
 	}
 
-	gcode_writeSpeed(outputfile, util_convertSpeed(10));
-	gcode_writeMove(outputfile, 0, printer.depthY, 50);
+	gcode_speed(outputfile, printer, util_convertSpeed(10));
+	gcode_move(outputfile, printer, 0, printer.depthY, 50);
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed
 	}

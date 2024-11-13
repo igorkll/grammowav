@@ -46,6 +46,26 @@ struct gui_object {
     int id;
 };
 
+typedef struct {
+    int nozzleTemperature;
+    int bedTemperature;
+
+    int widthX;
+    int depthY;
+    int heightZ;
+    double zOffset;
+
+    double nozzleDiameter;
+    double filamentDiameter;
+} printer_t;
+
+typedef struct {
+    double rpm;
+    double diskSize;
+    double trackWidth;
+    double trackAmplitude;
+} disk_t;
+
 #include "util.h"
 #include "gcode.h"
 #include "grammowav.h"
