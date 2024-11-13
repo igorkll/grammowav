@@ -130,6 +130,13 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_writeMove(outputfile, printer.widthX / 2, printer.depthY / 2, 0); //перемещяю башку в центр
 	gcode_writeSpeed(outputfile, util_convertSpeed(30));
 
+	fprintf(outputfile, "G28\n");
+	fprintf(outputfile, "G28\n");
+	fprintf(outputfile, "G28\n");
+	fprintf(outputfile, "G28\n");
+	fprintf(outputfile, "G28\n");
+	fprintf(outputfile, "G28\n");
+
 	size_t currentOffset = 0;
 	uint8_t datapart[4];
 	while (true) {

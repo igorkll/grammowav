@@ -132,6 +132,7 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gcode.h" />
     <ClInclude Include="grammowav.h" />
     <ClInclude Include="gui.h" />
     <ClInclude Include="resource.h" />
