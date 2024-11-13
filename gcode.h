@@ -9,9 +9,11 @@ void gcode_extrusion(bool state, double value) {
 }
 
 void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double z) {
+    z += printer.zOffset;
     if (_gcode_extrusion_state) {
         fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, _gcode_extrusion_value);
     } else {
+        fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z + 10);
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
     }
 }
@@ -22,4 +24,8 @@ void gcode_moveC(FILE* outputfile, printer_t printer, double x, double y, double
 
 void gcode_speed(FILE* outputfile, printer_t printer, double speed) {
     fprintf(outputfile, "G0 F%lf\n", speed);
+}
+
+void gcode_fan(FILE* outputfile, printer_t printer, uint8_t value) {
+    fprintf(outputfile, "M106 S%i\n", value);
 }

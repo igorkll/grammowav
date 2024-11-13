@@ -46,7 +46,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .widthX = 220,
             .depthY = 220,
             .heightZ = 250,
-            .zOffset = 0,
+            .zOffset = 0.1,
 
             .nozzleDiameter = 0.4,
             .filamentDiameter = 1.75
