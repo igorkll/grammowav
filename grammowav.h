@@ -106,17 +106,16 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 
 	fprintf(outputfile, "G28\n");
-	fprintf(outputfile, "M209 S1\n");
 	
 	//вентилятор на 200
 	gcode_fan(outputfile, printer, 200);
 	
 	// даю экструдеру пропердеться
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
-	gcode_move(outputfile, printer, 50, 20, 0);
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 5));
+	gcode_move(outputfile, printer, 50, 10, 0);
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 2));
 	gcode_extrusion = true;
-	gcode_move(outputfile, printer, printer.widthX - 50, 20, 0);
+	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
 	gcode_extrusion = false;
 
 	// перемещяю башку в центр
