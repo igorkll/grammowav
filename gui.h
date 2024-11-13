@@ -50,7 +50,8 @@ void save_gcode(gui_object* self, HWND hwnd) {
 
             .nozzleDiameter = 0.4,
             .filamentDiameter = 1.75,
-            .extrusionMultiplier = 1
+            .extrusionMultiplier = 1,
+            .layerThickness = 0.3
         };
 
         disk_t disk = {

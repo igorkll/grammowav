@@ -20,7 +20,7 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
 }
 
 void gcode_moveC(FILE* outputfile, printer_t printer, double x, double y, double z) {
-    gcode_move(outputfile, printer, (printer.widthX / 2) + x, (printer.depthY / 2) + y, 0);
+    gcode_move(outputfile, printer, (printer.widthX / 2) + x, (printer.depthY / 2) + y, z);
 }
 
 void gcode_speed(FILE* outputfile, printer_t printer, double speed) {

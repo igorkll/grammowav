@@ -59,6 +59,7 @@ typedef struct {
     double nozzleDiameter;
     double filamentDiameter;
     double extrusionMultiplier;
+    double layerThickness;
 } printer_t;
 
 typedef struct {
