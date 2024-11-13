@@ -9,7 +9,7 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
     z += printer.zOffset;
     if (gcode_extrusion) {
         double dist = util_dist(x, y, z, _gcode_currentX, _gcode_currentY, _gcode_currentZ);
-        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, dist * printer.extrusionMultiplier);
+        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, dist * printer.extrusionMultiplier * (printer.nozzleDiameter / printer.filamentDiameter));
     } else {
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z + 10);
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
