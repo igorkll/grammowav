@@ -5,8 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <windowsx.h>
-
-#define _USE_MATH_DEFINES
 #include <math.h>
 
 #define APP_NAME L"grammowav"
@@ -66,8 +64,6 @@ typedef struct {
     double retraction;
     double retractionSpeed;
     double retractionLift;
-
-    uint8_t fan;
 } printer_t;
 
 typedef struct {
