@@ -9,12 +9,17 @@ double _gcode_currentZ = 0;
 double _gcode_speed = 0;
 
 void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double z) {
+    x += printer.xOffset;
+    y += printer.yOffset;
     z += printer.zOffset;
+    if (printer.invertX) x = printer.widthX - x;
+    if (printer.invertY) y = printer.depthY - y;
+    if (printer.invertZ) z = printer.heightZ - z;
     if (gcode_extrusion) {
         double dist = util_dist(x, y, z, _gcode_currentX, _gcode_currentY, _gcode_currentZ);
-        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, dist * _GCODE_MUL * (printer.layerThickness / printer.filamentDiameter) * printer.extrusionMultiplier * (printer.nozzleDiameter / printer.filamentDiameter));
+        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, dist * _GCODE_MUL * printer.layerThickness * printer.extrusionMultiplier * (printer.nozzleDiameter / printer.filamentDiameter));
     } else {
-        fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z + 10);
+        fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", _gcode_currentX, _gcode_currentY, _gcode_currentZ + 10);
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
     }
     _gcode_currentX = x;

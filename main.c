@@ -53,19 +53,27 @@ typedef struct {
     int nozzleTemperature;
     int bedTemperature;
 
-    int widthX;
-    int depthY;
-    int heightZ;
+    double widthX;
+    double depthY;
+    double heightZ;
+    
+    double xOffset;
+    double yOffset;
     double zOffset;
 
     double nozzleDiameter;
     double filamentDiameter;
     double extrusionMultiplier;
     double layerThickness;
+    double lineDistance;
 
     double retraction;
     double retractionSpeed;
     double retractionLift;
+
+    bool invertX;
+    bool invertY;
+    bool invertZ;
 
     uint8_t fan;
 } printer_t;

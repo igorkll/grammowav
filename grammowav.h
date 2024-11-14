@@ -125,7 +125,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	// начинаю фигачить диск
 	gcode_extrusion = true;
 	for (double i = 0; i < 5; i += printer.layerThickness) {
-		for (double j = 0; j < 5; j += (printer.nozzleDiameter * 0.8)) {
+		for (double j = 0; j < 5; j += (printer.nozzleDiameter * printer.lineDistance)) {
 			gcode_moveC(outputfile, printer, 50 - j, j, i);
 			gcode_moveC(outputfile, printer, 50 - j, 50 - j, i);
 			gcode_moveC(outputfile, printer, j, 50 - j, i);
@@ -151,7 +151,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
-	gcode_move(outputfile, printer, 0, printer.depthY, 50);
+	gcode_moveC(outputfile, printer, 0, 0, 50);
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed
 	}

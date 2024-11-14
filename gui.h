@@ -52,6 +52,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .filamentDiameter = 1.75,
             .extrusionMultiplier = 1,
             .layerThickness = 0.3,
+            .lineDistance = 0.9,
 
             .retraction = 2,
             .retractionSpeed = 5,
