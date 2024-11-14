@@ -1,6 +1,6 @@
 #pragma once
 
-#define _GCODE_MUL 1.3
+#define _GCODE_MUL 0.5
 
 bool gcode_extrusion = false;
 double _gcode_currentX = 0;
@@ -22,6 +22,19 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", _gcode_currentX, _gcode_currentY, _gcode_currentZ + 10);
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
     }
+    _gcode_currentX = x;
+    _gcode_currentY = y;
+    _gcode_currentZ = z;
+}
+
+void gcode_dmove(FILE* outputfile, printer_t printer, double x, double y, double z) {
+    x += printer.xOffset;
+    y += printer.yOffset;
+    z += printer.zOffset;
+    if (printer.invertX) x = printer.widthX - x;
+    if (printer.invertY) y = printer.depthY - y;
+    if (printer.invertZ) z = printer.heightZ - z;
+    fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
     _gcode_currentX = x;
     _gcode_currentY = y;
     _gcode_currentZ = z;

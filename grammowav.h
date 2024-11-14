@@ -112,8 +112,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	
 	// даю экструдеру пропердеться
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
-	gcode_move(outputfile, printer, 50, 10, 0);
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 2));
+	gcode_dmove(outputfile, printer, 50, 10, 0);
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 1));
 	gcode_extrusion = true;
 	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
 	gcode_extrusion = false;
