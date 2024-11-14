@@ -124,9 +124,10 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	// начинаю фигачить диск
 	gcode_extrusion = true;
+	double holeRadius = disk.holeDiameter / 2;
 	double zPos = 0;
 	while (true) {
-		for (double radius = disk.diskDiameter / 2; radius > disk.holeDiameter; radius -= printer.lineDistance) {
+		for (double radius = disk.diskDiameter / 2; radius > holeRadius; radius -= printer.lineDistance) {
 			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
 				double r = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
 				gcode_moveC(outputfile, printer, sin(r) * radius, cos(r) * radius, zPos);
