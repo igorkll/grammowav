@@ -66,6 +66,7 @@ typedef struct {
     double extrusionMultiplier;
     double layerThickness;
     double lineDistance;
+    int circleFacesNumber;
 
     double retraction;
     double retractionSpeed;
@@ -80,7 +81,11 @@ typedef struct {
 
 typedef struct {
     double rpm;
-    double diskSize;
+
+    double diskDiameter;
+    double holeDiameter;
+    double diskHeight;
+
     double trackWidth;
     double trackAmplitude;
 } disk_t;

@@ -52,7 +52,8 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .filamentDiameter = 1.75,
             .extrusionMultiplier = 1,
             .layerThickness = 0.3,
-            .lineDistance = 0.9,
+            .lineDistance = 0.4 * 0.9,
+            .circleFacesNumber = 64,
 
             .retraction = 2,
             .retractionSpeed = 5,
@@ -63,7 +64,11 @@ void save_gcode(gui_object* self, HWND hwnd) {
 
         disk_t disk = {
             .rpm = 78,
-            .diskSize = 12,
+
+            .diskDiameter = 50,
+            .holeDiameter = 8,
+            .diskHeight = 2,
+
             .trackWidth = 0.1,
             .trackAmplitude = 0.05
         };

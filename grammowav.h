@@ -124,12 +124,17 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	// начинаю фигачить диск
 	gcode_extrusion = true;
-	for (double i = 0; i < 5; i += printer.layerThickness) {
-		for (double j = 0; j < 5; j += (printer.nozzleDiameter * printer.lineDistance)) {
-			gcode_moveC(outputfile, printer, 50 - j, j, i);
-			gcode_moveC(outputfile, printer, 50 - j, 50 - j, i);
-			gcode_moveC(outputfile, printer, j, 50 - j, i);
-			gcode_moveC(outputfile, printer, j, j, i);
+	double zPos = 0;
+	while (true) {
+		for (double radius = disk.diskDiameter / 2; radius > disk.holeDiameter; radius -= printer.lineDistance) {
+			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
+				double r = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
+				gcode_moveC(outputfile, printer, sin(r) * radius, cos(r) * radius, zPos);
+			}
+		}
+		zPos += printer.layerThickness;
+		if (zPos >= disk.diskHeight) {
+			break;
 		}
 	}
 	gcode_extrusion = false;
