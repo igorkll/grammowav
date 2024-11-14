@@ -1,6 +1,6 @@
 #pragma once
 
-#define _GCODE_MUL 0.5
+#define _GCODE_MUL 1
 
 bool gcode_extrusion = false;
 double _gcode_currentX = 0;
@@ -17,7 +17,8 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
     if (printer.invertZ) z = printer.heightZ - z;
     if (gcode_extrusion) {
         double dist = util_dist(x, y, z, _gcode_currentX, _gcode_currentY, _gcode_currentZ);
-        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, dist * _GCODE_MUL * printer.layerThickness * printer.extrusionMultiplier * (printer.nozzleDiameter / printer.filamentDiameter));
+        double filamentRadius = printer.filamentDiameter / 2;
+        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, (_GCODE_MUL * printer.extrusionMultiplier * dist * printer.nozzleDiameter * printer.layerThickness) / (M_PI * filamentRadius * filamentRadius));
     } else {
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", _gcode_currentX, _gcode_currentY, _gcode_currentZ + 10);
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
