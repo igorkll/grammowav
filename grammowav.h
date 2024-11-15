@@ -118,12 +118,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
 	gcode_extrusion = false;
 
-	// перемещяю башку в центр
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
-	gcode_moveC(outputfile, printer, 0, 0, 0);
-
 	// начинаю фигачить диск
-	gcode_extrusion = true;
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
 	double holeRadius = disk.holeDiameter / 2;
 	double zPos = 0;
 	while (true) {
@@ -131,6 +127,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
 				double r = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
 				gcode_moveC(outputfile, printer, sin(r) * radius, cos(r) * radius, zPos);
+				gcode_extrusion = true;
 			}
 		}
 		zPos += printer.layerThickness;
