@@ -111,49 +111,58 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_fan(outputfile, printer, printer.fan);
 	
 	// даю экструдеру пропердеться
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
 	gcode_dmove(outputfile, printer, 50, 10, 0);
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 1));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
 	gcode_extrusion = true;
 	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
 	gcode_extrusion = false;
 
 	// начинаю фигачить диск
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
 	double holeRadius = disk.holeDiameter / 2;
 	double zPos = 0;
 	while (true) {
 		for (double radius = disk.diskDiameter / 2; radius > holeRadius; radius -= printer.lineDistance) {
 			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
 				double r = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-				gcode_moveC(outputfile, printer, sin(r) * radius, cos(r) * radius, zPos);
-				gcode_extrusion = true;
+				gcode_moveC(outputfile, printer, sin(r) * radius, cos(r) * -radius, zPos);
+				if (!gcode_extrusion) {
+					gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
+					gcode_extrusion = true;
+				}
 			}
+		}
+		zPos += printer.layerThickness;
+		if (zPos >= disk.diskHeight - disk.trackHeight) {
+			break;
+		}
+	}
+
+	while (true) {
+		size_t currentOffset = 0;
+		uint8_t datapart[4];
+		while (true) {
+			double sample = 0;
+			for (size_t channel = 0; channel < numChannels; channel++) {
+				fread(datapart, 1, rate, file);
+				sample += convertSample(datapart, rate, false);
+			}
+			sample /= numChannels;
+
+			//util_writeMove(outputfile, (printer.widthX / 2) + (sample * 0.1), printer.depthY / 2, 0);
+
+			currentOffset += rate * numChannels;
+			if (currentOffset >= fileSize) break;
 		}
 		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight) {
 			break;
 		}
 	}
+
 	gcode_extrusion = false;
-
-	size_t currentOffset = 0;
-	uint8_t datapart[4];
-	while (true) {
-		double sample = 0;
-		for (size_t channel = 0; channel < numChannels; channel++) {
-			fread(datapart, 1, rate, file);
-			sample += convertSample(datapart, rate, false);
-		}
-		sample /= numChannels;
-
-		//util_writeMove(outputfile, (printer.widthX / 2) + (sample * 0.1), printer.depthY / 2, 0);
-
-		currentOffset += rate * numChannels;
-		if (currentOffset >= fileSize) break;
-	}
-
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
 	gcode_moveC(outputfile, printer, 0, 0, 50);
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed

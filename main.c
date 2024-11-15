@@ -89,6 +89,7 @@ typedef struct {
     double diskHeight;
 
     double trackWidth;
+    double trackHeight;
     double trackAmplitude;
 } disk_t;
 
