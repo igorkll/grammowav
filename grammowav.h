@@ -172,7 +172,10 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 				double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
 				double localRadius = radius - (sample * disk.trackAmplitude);
 				gcode_moveC(outputfile, printer, sin(rotate) * localRadius, cos(rotate) * -localRadius, zPos);
-				gcode_extrusion = true;
+				if (!gcode_extrusion) {
+					gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.trackPrintSpeed));
+					gcode_extrusion = true;
+				}
 
 				radius -= trackOffset;
 				currentSample++;
