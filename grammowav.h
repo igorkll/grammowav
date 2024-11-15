@@ -91,6 +91,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		fread(&offset, 4, 1, file);
 	}
 	size_t fileSize = offset;
+	size_t samplesCount = fileSize / rate / numChannels;
 
 	// -------------- start generation gcode
 	fprintf(outputfile, "G90\n"); //use absolute coordinates
@@ -145,7 +146,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
 	double labelRadius = disk.labelDiameter / 2;
-	double trackOffset = diskRadius - labelRadius;
+	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	while (true) {
 		size_t currentOffset = 0;
 		size_t currentSample = 0;
