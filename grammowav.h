@@ -141,6 +141,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			break;
 		}
 	}
+	zPos = 0;
 	gcode_extrusion = false;
 	
 	// фигачу дорожку

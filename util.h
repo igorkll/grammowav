@@ -11,7 +11,7 @@ void util_filename(char* name, const char* path) {
 }
 
 int util_convertSpeed(printer_t printer, int speed) {
-    return speed * 10 * 60;
+    return speed * 60;
 }
 
 double util_dist(double x1, double y1, double z1, double x2, double y2, double z2) {
