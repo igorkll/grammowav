@@ -86,7 +86,6 @@ typedef struct {
 
     double diskDiameter;
     double holeDiameter;
-    double labelDiameter;
     double diskHeight;
 
     double trackWidth;

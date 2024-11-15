@@ -127,24 +127,21 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		for (double radius = diskRadius; radius > holeRadius; radius -= printer.lineDistance) {
 			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
 				double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-				//gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
+				gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
 				if (!gcode_extrusion) {
 					gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
 					gcode_extrusion = true;
 				}
 			}
 		}
-		gcode_extrusion = false;
 		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight - disk.trackHeight) {
 			break;
 		}
 	}
-	gcode_extrusion = false;
-	
-	// фигачу дорожку
-	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
-	double trackOffset = ;
+
+	double numberSamplesPerturn = disk.rpm;
+
 	while (true) {
 		size_t currentOffset = 0;
 		size_t currentSample = 0;
@@ -160,7 +157,6 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 			double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
 			gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-			gcode_extrusion = true;
 
 			currentOffset += rate * numChannels;
 			currentSample++;
