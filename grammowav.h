@@ -119,7 +119,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_extrusion = false;
 
 	// начинаю фигачить диск
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
 	double holeRadius = disk.holeDiameter / 2;
 	double zPos = 0;
 	while (true) {

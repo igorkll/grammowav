@@ -77,6 +77,8 @@ typedef struct {
     bool invertZ;
 
     uint8_t fan;
+    int diskPrintSpeed;
+    int trackPrintSpeed;
 } printer_t;
 
 typedef struct {

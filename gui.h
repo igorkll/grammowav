@@ -59,7 +59,9 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .retractionSpeed = 5,
             .retractionLift = 3,
 
-            .fan = 200
+            .fan = 255,
+            .diskPrintSpeed = 2,
+            .trackPrintSpeed = 2,
         };
 
         disk_t disk = {
