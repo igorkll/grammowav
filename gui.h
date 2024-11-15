@@ -60,7 +60,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .retractionLift = 3,
 
             .fan = 255,
-            .diskPrintSpeed = 40,
+            .diskPrintSpeed = 20,
             .trackPrintSpeed = 10,
         };
 
