@@ -69,7 +69,6 @@ void save_gcode(gui_object* self, HWND hwnd) {
 
             .diskDiameter = 50,
             .holeDiameter = 8,
-            .labelDiameter = 20,
             .diskHeight = 1,
 
             .trackWidth = 0.3,

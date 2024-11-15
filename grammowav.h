@@ -144,7 +144,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
-	double trackOffset = ;
+	double labelRadius = disk.labelDiameter / 2;
+	double trackOffset = 0.1;
 	while (true) {
 		size_t currentOffset = 0;
 		size_t currentSample = 0;
@@ -162,10 +163,12 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
 			gcode_extrusion = true;
 
+			radius -= trackOffset;
 			currentOffset += rate * numChannels;
 			currentSample++;
 			if (currentOffset >= fileSize) break;
 		}
+		gcode_extrusion = false;
 		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight) {
 			break;
