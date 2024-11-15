@@ -67,9 +67,9 @@ void save_gcode(gui_object* self, HWND hwnd) {
         disk_t disk = {
             .rpm = 78,
 
-            .diskDiameter = 50,
+            .diskDiameter = 100,
             .holeDiameter = 8,
-            .labelDiameter = 20,
+            .labelDiameter = 10,
             .diskHeight = 1,
 
             .trackWidth = 0.3,

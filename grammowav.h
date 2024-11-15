@@ -128,7 +128,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		for (double radius = diskRadius; radius > holeRadius; radius -= printer.lineDistance) {
 			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
 				double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-				//gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
+				gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
 				if (!gcode_extrusion) {
 					gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
 					gcode_extrusion = true;
@@ -141,7 +141,6 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			break;
 		}
 	}
-	zPos = 0;
 	gcode_extrusion = false;
 	
 	// фигачу дорожку
@@ -149,28 +148,30 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	double labelRadius = disk.labelDiameter / 2;
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	while (true) {
-		size_t currentOffset = 0;
-		size_t currentSample = 0;
-		uint8_t datapart[4];
-		double radius = diskRadius;
-		while (true) {
-			double sample = 0;
-			for (size_t channel = 0; channel < numChannels; channel++) {
-				fread(datapart, 1, rate, file);
-				sample += convertSample(datapart, rate, false);
+		for (uint8_t n = 1; n <= 2; n++) {
+			size_t currentOffset = 0;
+			size_t currentSample = 0;
+			uint8_t datapart[4];
+			double radius = diskRadius - (disk.trackWidth * n);
+			while (true) {
+				double sample = 0;
+				for (size_t channel = 0; channel < numChannels; channel++) {
+					fread(datapart, 1, rate, file);
+					sample += convertSample(datapart, rate, false);
+				}
+				sample /= numChannels;
+
+				double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
+				gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
+				gcode_extrusion = true;
+
+				radius -= trackOffset;
+				currentOffset += rate * numChannels;
+				currentSample++;
+				if (currentOffset >= fileSize) break;
 			}
-			sample /= numChannels;
-
-			double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
-			gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-			gcode_extrusion = true;
-
-			radius -= trackOffset;
-			currentOffset += rate * numChannels;
-			currentSample++;
-			if (currentOffset >= fileSize) break;
+			gcode_extrusion = false;
 		}
-		gcode_extrusion = false;
 		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight) {
 			break;
