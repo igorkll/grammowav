@@ -72,8 +72,8 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .labelDiameter = 10,
             .diskHeight = 1,
 
-            .trackWidth = 0.3,
-            .trackHeight = 0.3,
+            .trackWidth = 1,
+            .trackHeight = 0.6,
             .trackAmplitude = 0.3
         };
 
