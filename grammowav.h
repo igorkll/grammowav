@@ -142,6 +142,21 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		}
 	}
 	gcode_extrusion = false;
+
+	double* soundData = malloc(samplesCount * sizeof(double));
+	size_t currentSample = 0;
+	uint8_t datapart[4];
+	while (true) {
+		double sample = 0;
+		for (size_t channel = 0; channel < numChannels; channel++) {
+			fread(datapart, 1, rate, file);
+			sample += convertSample(datapart, rate, false);
+		}
+
+		soundData[currentSample] = sample / numChannels;
+		currentSample++;
+		if (currentSample >= samplesCount) break;
+	}
 	
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
@@ -149,17 +164,10 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	while (true) {
 		for (uint8_t n = 1; n <= 2; n++) {
-			size_t currentOffset = 0;
-			size_t currentSample = 0;
-			uint8_t datapart[4];
+			currentSample = 0;
 			double radius = diskRadius - (disk.trackWidth * n);
 			while (true) {
-				double sample = 0;
-				for (size_t channel = 0; channel < numChannels; channel++) {
-					fread(datapart, 1, rate, file);
-					sample += convertSample(datapart, rate, false);
-				}
-				sample /= numChannels;
+				double sample = soundData[currentSample];
 
 				double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
 				double localRadius = radius - (sample * disk.trackAmplitude);
@@ -167,9 +175,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 				gcode_extrusion = true;
 
 				radius -= trackOffset;
-				currentOffset += rate * numChannels;
 				currentSample++;
-				if (currentOffset >= fileSize) break;
+				if (currentSample >= samplesCount) break;
 			}
 			gcode_extrusion = false;
 		}
@@ -191,6 +198,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	fprintf(outputfile, "M107\n"); //turn off fan
 	fprintf(outputfile, "M84"); //disable motors
 
+	free(soundData);
 	fclose(file);
 	fclose(outputfile);
 
