@@ -145,7 +145,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
 	double labelRadius = disk.labelDiameter / 2;
-	double trackOffset = 0.1;
+	double trackOffset = diskRadius - labelRadius;
 	while (true) {
 		size_t currentOffset = 0;
 		size_t currentSample = 0;
