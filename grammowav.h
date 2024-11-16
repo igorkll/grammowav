@@ -101,9 +101,11 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		fprintf(outputfile, "M140 S%i\n", printer.bedTemperature); //set bed temp
 		fprintf(outputfile, "M190 S%i\n", printer.bedTemperature); //wait for bed temp
 	}
-	if (printer.nozzleTemperature > 0) {
-		fprintf(outputfile, "M104 S%i\n", printer.nozzleTemperature); //set extruder temp
-		fprintf(outputfile, "M109 S%i\n", printer.nozzleTemperature); //wait for extruder temp
+	bool needDisableTemperature = false;
+	if (printer.diskNozzleTemperature > 0) {
+		needDisableTemperature = true;
+		fprintf(outputfile, "M104 S%i\n", printer.diskNozzleTemperature); //set extruder temp
+		fprintf(outputfile, "M109 S%i\n", printer.diskNozzleTemperature); //wait for extruder temp
 	}
 
 	fprintf(outputfile, "G28\n");
@@ -187,6 +189,13 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 		}
 	}
+
+	// если нада то меняю температуру сопла на трековую
+	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
+		needDisableTemperature = true;
+		fprintf(outputfile, "M104 S%i\n", printer.trackNozzleTemperature); //set extruder temp
+		fprintf(outputfile, "M109 S%i\n", printer.trackNozzleTemperature); //wait for extruder temp
+	}
 	
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
@@ -225,7 +234,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed
 	}
-	if (printer.nozzleTemperature > 0) {
+	if (needDisableTemperature) {
 		fprintf(outputfile, "M104 S0\n"); //turn off temperature
 	}
 	fprintf(outputfile, "M107\n"); //turn off fan

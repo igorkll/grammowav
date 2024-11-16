@@ -50,8 +50,9 @@ struct gui_object {
 };
 
 typedef struct {
-    int nozzleTemperature;
     int bedTemperature;
+    int diskNozzleTemperature;
+    int trackNozzleTemperature;
 
     double widthX;
     double depthY;
