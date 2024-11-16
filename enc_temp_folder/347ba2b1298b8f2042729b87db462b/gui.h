@@ -42,7 +42,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
         printer_t printer = {
             .bedTemperature = 65,
             .diskNozzleTemperature = 215,
-            .trackNozzleTemperature = 215,
+            .trackNozzleTemperature = 205,
 
             .widthX = 220,
             .depthY = 220,
