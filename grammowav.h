@@ -162,11 +162,17 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	// нармализую звук, деля его на фрагменты а потом подбирая множитель пока не упреться в предел
 	int normalize_frame = sampleRate / 8;
 	double normalize_step = 0.05;
+	double normalize_minProcessValue = 0.01;
 	double normalize_mulUp = 1 + normalize_step;
 	double normalize_mulDown = 1 - normalize_step;
 
 	for (size_t offset = 0; offset < samplesCount; offset += normalize_frame) {
-		while (true) {
+		bool soundexists = false;
+		for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
+			double value = soundData[offset + frameOffset];
+			if (value > normalize_minProcessValue || value < -normalize_minProcessValue) soundexists = true;
+		}
+		while (soundexists) {
 			bool overrange = false;
 			for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
 				soundData[offset + frameOffset] *= normalize_mulUp;
