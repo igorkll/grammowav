@@ -143,6 +143,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	// настраиваю
 	gcode_fan(outputfile, printer, printer.diskFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.diskExtrusionMultiplier);
+	gcode_layerThickness(outputfile, printer, printer.diskLayerThickness);
 	
 	// даю экструдеру пропердеться
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
@@ -181,7 +182,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	if (soundData == NULL) {
 		fclose(outputfile);
 		fclose(file);
-		return;
+		return 3;
 	}
 	size_t currentSample = 0;
 	uint8_t datapart[4];
@@ -237,6 +238,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 	gcode_fan(outputfile, printer, printer.trackFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
+	gcode_layerThickness(outputfile, printer, printer.trackLayerThickness);
 
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
