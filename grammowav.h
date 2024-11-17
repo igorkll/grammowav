@@ -29,6 +29,36 @@ static double convertSample(uint8_t* datapart, size_t size, bool signedInt) {
 	return 0;
 }
 
+void grammowav_debugExportWav(double* samples, size_t samplesCount, uint32_t sampleRate) {
+	FILE* outputfile = fopen("D:\\debug.wav", "wb");
+	fwrite("RIFF", 1, 4, outputfile);
+	uint32_t chunkSize = (samplesCount * sizeof(uint32_t)) + (44 - 8);
+	fwrite(&chunkSize, sizeof(uint32_t), 1, outputfile);
+	fwrite("WAVE", 1, 4, outputfile);
+	fwrite("fmt ", 1, 4, outputfile);
+	uint32_t subchunk1Size = 16;
+	fwrite(&subchunk1Size, sizeof(uint32_t), 1, outputfile);
+	uint16_t audioFormat = 1;
+	fwrite(&audioFormat, sizeof(uint16_t), 1, outputfile);
+	uint16_t numChannels = 1;
+	fwrite(&numChannels, sizeof(uint16_t), 1, outputfile);
+	fwrite(&sampleRate, sizeof(uint32_t), 1, outputfile);
+	uint32_t byteRate = sampleRate * sizeof(uint32_t);
+	fwrite(&byteRate, sizeof(uint32_t), 1, outputfile);
+	uint16_t blockAlign = sizeof(uint32_t);
+	fwrite(&blockAlign, sizeof(uint16_t), 1, outputfile);
+	uint16_t bitsPerSample = 32;
+	fwrite(&bitsPerSample, sizeof(uint16_t), 1, outputfile);
+	fwrite("data", 1, 4, outputfile);
+	uint32_t subchunk2Size = samplesCount * sizeof(uint32_t);
+	fwrite(&subchunk2Size, sizeof(uint32_t), 1, outputfile);
+	for (size_t i = 0; i < samplesCount; i++) {
+		int32_t sample = samples[i] * 2147483647;
+		fwrite(&sample, sizeof(uint32_t), 1, outputfile);
+	}
+	fclose(outputfile);
+}
+
 int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t printer, disk_t disk) {
 	FILE* file = fopen(path, "rb");
 	if (file == NULL) return 1;
@@ -189,6 +219,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 		}
 	}
+	grammowav_debugExportWav(soundData, samplesCount, sampleRate);
 
 	// если нада то меняю температуру сопла на трековую
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
