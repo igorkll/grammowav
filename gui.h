@@ -70,10 +70,10 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .diskDiameter = 100,
             .holeDiameter = 8,
             .labelDiameter = 10,
-            .diskHeight = 1,
+            .diskHeight = 0.6,
 
             .trackWidth = 1,
-            .trackHeight = 0.6,
+            .trackHeight = 0.3,
             .trackAmplitude = 0.3
         };
 

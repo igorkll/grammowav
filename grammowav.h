@@ -221,7 +221,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		}
 	}
 	*/
-	grammowav_debugExportWav(soundData, samplesCount, sampleRate);
+	//grammowav_debugExportWav(soundData, samplesCount, sampleRate);
 
 	// если нада то меняю температуру сопла на трековую
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
