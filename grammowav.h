@@ -140,8 +140,9 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	fprintf(outputfile, "G28\n");
 
-	// включаю вентилятор
-	gcode_fan(outputfile, printer, printer.fan);
+	// настраиваю
+	gcode_fan(outputfile, printer, printer.diskFan);
+	gcode_extrusionMultiplier(outputfile, printer, printer.diskExtrusionMultiplier);
 	
 	// даю экструдеру пропердеться
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
@@ -155,8 +156,9 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
 	double holeRadius = disk.holeDiameter / 2;
 	double diskRadius = disk.diskDiameter / 2;
-	double zPos = 0;
+	double zPos = -printer.diskLayerThickness;
 	while (true) {
+		zPos += printer.diskLayerThickness;
 		for (double radius = diskRadius; radius > holeRadius; radius -= printer.lineDistance) {
 			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
 				double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
@@ -168,7 +170,6 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 		}
 		gcode_extrusion = false;
-		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight - disk.trackHeight) {
 			break;
 		}
@@ -177,6 +178,11 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	// читаю ВЕСЬ wav в оперативу (сам знаю что дофига весить будет, но мне сейчас не до оптимизации)
 	double* soundData = malloc(samplesCount * sizeof(double));
+	if (soundData == NULL) {
+		fclose(outputfile);
+		fclose(file);
+		return;
+	}
 	size_t currentSample = 0;
 	uint8_t datapart[4];
 	while (true) {
@@ -223,18 +229,21 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	*/
 	//grammowav_debugExportWav(soundData, samplesCount, sampleRate);
 
-	// если нада то меняю температуру сопла на трековую
+	// меняю настройки на трековые
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
 		needDisableTemperature = true;
 		fprintf(outputfile, "M104 S%i\n", printer.trackNozzleTemperature); //set extruder temp
 		fprintf(outputfile, "M109 S%i\n", printer.trackNozzleTemperature); //wait for extruder temp
 	}
-	
+	gcode_fan(outputfile, printer, printer.trackFan);
+	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
+
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
 	double labelRadius = disk.labelDiameter / 2;
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	while (true) {
+		zPos += printer.trackLayerThickness;
 		for (uint8_t n = 1; n <= 2; n++) {
 			currentSample = 0;
 			double radius = diskRadius - (disk.trackWidth * n);
@@ -255,7 +264,6 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 			gcode_extrusion = false;
 		}
-		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight) {
 			break;
 		}

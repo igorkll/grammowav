@@ -42,7 +42,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
         printer_t printer = {
             .bedTemperature = 65,
             .diskNozzleTemperature = 215,
-            .trackNozzleTemperature = 215,
+            .trackNozzleTemperature = 205,
 
             .widthX = 220,
             .depthY = 220,
@@ -51,17 +51,23 @@ void save_gcode(gui_object* self, HWND hwnd) {
 
             .nozzleDiameter = 0.4,
             .filamentDiameter = 1.75,
-            .extrusionMultiplier = 1,
-            .layerThickness = 0.3,
             .lineDistance = 0.4 * 0.9,
-            .circleFacesNumber = 64,
+            .circleFacesNumber = 32,
+
+            .diskExtrusionMultiplier = 1,
+            .trackExtrusionMultiplier = 0.8,
+
+            .diskLayerThickness = 0.3,
+            .trackLayerThickness = 0.2,
 
             .retraction = 2,
             .retractionSpeed = 5,
 
-            .fan = 255,
+            .diskFan = 255,
+            .trackFan = 200,
+
             .diskPrintSpeed = 20,
-            .trackPrintSpeed = 10,
+            .trackPrintSpeed = 5,
         };
 
         disk_t disk = {
@@ -70,10 +76,10 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .diskDiameter = 100,
             .holeDiameter = 8,
             .labelDiameter = 10,
-            .diskHeight = 0.6,
+            .diskHeight = 0.5,
 
-            .trackWidth = 1,
-            .trackHeight = 0.3,
+            .trackWidth = 1.5,
+            .trackHeight = 0.2,
             .trackAmplitude = 0.3
         };
 

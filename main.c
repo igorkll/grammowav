@@ -64,10 +64,14 @@ typedef struct {
 
     double nozzleDiameter;
     double filamentDiameter;
-    double extrusionMultiplier;
-    double layerThickness;
     double lineDistance;
     int circleFacesNumber;
+
+    double diskExtrusionMultiplier;
+    double trackExtrusionMultiplier;
+
+    double diskLayerThickness;
+    double trackLayerThickness;
 
     double retraction;
     double retractionSpeed;
@@ -76,7 +80,9 @@ typedef struct {
     bool invertY;
     bool invertZ;
 
-    uint8_t fan;
+    uint8_t diskFan;
+    uint8_t trackFan;
+
     int diskPrintSpeed;
     int trackPrintSpeed;
 } printer_t;
