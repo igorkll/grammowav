@@ -192,6 +192,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 
 	// нармализую звук, деля его на фрагменты а потом подбирая множитель пока не упреться в предел
+	/*
 	int normalize_frame = sampleRate / 8;
 	double normalize_step = 0.05;
 	double normalize_minProcessValue = 0.01;
@@ -219,6 +220,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 		}
 	}
+	*/
 	grammowav_debugExportWav(soundData, samplesCount, sampleRate);
 
 	// если нада то меняю температуру сопла на трековую
