@@ -110,7 +110,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	fprintf(outputfile, "G28\n");
 
-	//вентилятор на 200
+	// включаю вентилятор
 	gcode_fan(outputfile, printer, printer.fan);
 	
 	// даю экструдеру пропердеться

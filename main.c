@@ -71,7 +71,6 @@ typedef struct {
 
     double retraction;
     double retractionSpeed;
-    double retractionLift;
 
     bool invertX;
     bool invertY;

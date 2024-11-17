@@ -3,6 +3,7 @@
 #define _GCODE_MUL 1
 
 bool gcode_extrusion = false;
+bool gcode_retracted = false;
 double _gcode_currentX = 0;
 double _gcode_currentY = 0;
 double _gcode_currentZ = 0;
@@ -24,7 +25,14 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
     if (gcode_extrusion) {
         double dist = util_dist(x, y, z, _gcode_currentX, _gcode_currentY, _gcode_currentZ);
         double extrussion = gcode_calculateE(dist, printer);
-        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, _GCODE_MUL * printer.extrusionMultiplier * extrussion);
+        double extrussionValue = _GCODE_MUL * printer.extrusionMultiplier * extrussion;
+        if (gcode_retracted) {
+            extrussionValue += printer.retraction;
+        }
+        fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n", x, y, z, extrussionValue);
+        fprintf(outputfile, "G1 F%lf E%lf\n", printer.retractionSpeed, -printer.retraction);
+        fprintf(outputfile, "G1 F%lf\n", _gcode_speed);
+        gcode_retracted = true;
     } else {
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", _gcode_currentX, _gcode_currentY, _gcode_currentZ + 10);
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
