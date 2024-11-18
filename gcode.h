@@ -33,7 +33,7 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
         //    extrussionValue += printer.retraction;
         //}
         if (gcode_needDeretracted) {
-            fprintf(outputfile, "G1 F%lf\n", printer.retractionSpeed);
+            fprintf(outputfile, "G1 F%lf\n", util_convertSpeed(printer, printer.retractionSpeed));
             fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n",
                 _gcode_currentX, _gcode_currentY, _gcode_currentZ, printer.retraction);
             fprintf(outputfile, "G1 F%lf\n", _gcode_speed);
@@ -44,8 +44,8 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
         //fprintf(outputfile, "G1 F%lf\n", _gcode_speed);
         gcode_needRetracted = true;
     } else {
-        if (gcode_needRetracted && printer.retraction > 0) {
-            fprintf(outputfile, "G1 F%lf\n", printer.retractionSpeed);
+        if (gcode_needRetracted && printer.retraction > 0 && false) {
+            fprintf(outputfile, "G1 F%lf\n", util_convertSpeed(printer, printer.retractionSpeed));
             fprintf(outputfile, "G1 X%lf Y%lf Z%lf E%lf\n",
                 _gcode_currentX, _gcode_currentY, _gcode_currentZ + 3, -printer.retraction);
             fprintf(outputfile, "G1 F%lf\n", _gcode_speed);

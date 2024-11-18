@@ -182,15 +182,16 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	if (soundData == NULL) {
 		fclose(outputfile);
 		fclose(file);
-		return 3;
+		return 4;
 	}
 	size_t currentSample = 0;
 	uint8_t datapart[4];
+	bool signedPcm = rate > 1;
 	while (true) {
 		double sample = 0;
 		for (size_t channel = 0; channel < numChannels; channel++) {
 			fread(datapart, 1, rate, file);
-			sample += convertSample(datapart, rate, false);
+			sample += convertSample(datapart, rate, signedPcm);
 		}
 
 		soundData[currentSample] = sample / numChannels;
@@ -228,7 +229,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		}
 	}
 	*/
-	//grammowav_debugExportWav(soundData, samplesCount, sampleRate);
+	grammowav_debugExportWav(soundData, samplesCount, sampleRate);
 
 	// меняю настройки на трековые
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {

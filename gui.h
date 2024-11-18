@@ -100,6 +100,14 @@ void save_gcode(gui_object* self, HWND hwnd) {
                 MessageBoxA(hwnd, "the beginning of the audio data could not be found", MB_OK, MB_ICONERROR);
                 break;
 
+            case 4:
+                MessageBoxA(hwnd, "insufficient RAM", MB_OK, MB_ICONERROR);
+                break;
+
+            default:
+                MessageBoxA(hwnd, "unknown error", MB_OK, MB_ICONERROR);
+                break;
+
         }
     }
 }
