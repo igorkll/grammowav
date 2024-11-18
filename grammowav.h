@@ -274,7 +274,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	gcode_extrusion = false;
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
-	gcode_moveC(outputfile, printer, 0, 0, 50);
+	gcode_move(outputfile, printer, 0, printer.depthY, 0);
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed
 	}

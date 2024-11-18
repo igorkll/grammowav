@@ -10,7 +10,7 @@ void util_filename(char* name, const char* path) {
     strcpy(name, filename + 1);
 }
 
-int util_convertSpeed(printer_t printer, int speed) {
+double util_convertSpeed(printer_t printer, double speed) {
     return speed * 60;
 }
 

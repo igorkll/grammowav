@@ -58,7 +58,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .trackExtrusionMultiplier = 1,
 
             .diskLayerThickness = 0.3,
-            .trackLayerThickness = 0.2,
+            .trackLayerThickness = 0.3,
 
             .retraction = 2,
             .retractionSpeed = 5,
@@ -76,11 +76,11 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .diskDiameter = 100,
             .holeDiameter = 8,
             .labelDiameter = 10,
-            .diskHeight = 0.5,
+            .diskHeight = 0.6,
 
-            .trackWidth = 1.5,
-            .trackHeight = 0.2,
-            .trackAmplitude = 0.3
+            .trackWidth = 1,
+            .trackHeight = 0.3,
+            .trackAmplitude = 0.15
         };
 
         switch (grammowav_wavToGcode(currentPath, savePath, printer, disk)) {
