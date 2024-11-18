@@ -53,7 +53,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .filamentDiameter = 1.75,
             .lineDistance = 0.4 * 0.9,
             .circleFacesNumber = 32,
-            .layerThickness = 0.3,
+            .layerThickness = 0.2,
 
             .diskExtrusionMultiplier = 1,
             .trackExtrusionMultiplier = 1,
@@ -71,14 +71,14 @@ void save_gcode(gui_object* self, HWND hwnd) {
         disk_t disk = {
             .rpm = 78,
 
-            .diskDiameter = 100,
+            .diskDiameter = 80,
             .holeDiameter = 8,
-            .labelDiameter = 10,
-            .diskHeight = 0.6,
+            .labelDiameter = 15,
+            .diskHeight = 0.4,
 
             .trackWidth = 1,
-            .trackHeight = 0.3,
-            .trackAmplitude = 0.15
+            .trackHeight = 0.2,
+            .trackAmplitude = 0.4
         };
 
         switch (grammowav_wavToGcode(currentPath, savePath, printer, disk)) {
