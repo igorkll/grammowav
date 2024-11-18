@@ -53,12 +53,10 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .filamentDiameter = 1.75,
             .lineDistance = 0.4 * 0.9,
             .circleFacesNumber = 32,
+            .layerThickness = 0.3,
 
             .diskExtrusionMultiplier = 1,
             .trackExtrusionMultiplier = 1,
-
-            .diskLayerThickness = 0.3,
-            .trackLayerThickness = 0.3,
 
             .retraction = 2,
             .retractionSpeed = 5,

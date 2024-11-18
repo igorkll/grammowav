@@ -143,7 +143,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	// настраиваю
 	gcode_fan(outputfile, printer, printer.diskFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.diskExtrusionMultiplier);
-	gcode_layerThickness(outputfile, printer, printer.diskLayerThickness);
+	gcode_layerThickness(outputfile, printer, printer.layerThickness);
 	
 	// даю экструдеру пропердеться
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
@@ -157,9 +157,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
 	double holeRadius = disk.holeDiameter / 2;
 	double diskRadius = disk.diskDiameter / 2;
-	double zPos = -printer.diskLayerThickness;
+	double zPos = 0;
 	while (true) {
-		zPos += printer.diskLayerThickness;
 		for (double radius = diskRadius; radius > holeRadius; radius -= printer.lineDistance) {
 			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
 				double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
@@ -171,6 +170,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 		}
 		gcode_extrusion = false;
+		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight - disk.trackHeight) {
 			break;
 		}
@@ -239,14 +239,12 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 	gcode_fan(outputfile, printer, printer.trackFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
-	gcode_layerThickness(outputfile, printer, printer.trackLayerThickness);
 
 	// фигачу дорожку
 	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
 	double labelRadius = disk.labelDiameter / 2;
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	while (true) {
-		zPos += printer.trackLayerThickness;
 		for (uint8_t n = 1; n <= 2; n++) {
 			currentSample = 0;
 			double radius = diskRadius - (disk.trackWidth * n);
@@ -267,6 +265,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 			gcode_extrusion = false;
 		}
+		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight) {
 			break;
 		}

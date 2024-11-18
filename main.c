@@ -66,12 +66,10 @@ typedef struct {
     double filamentDiameter;
     double lineDistance;
     int circleFacesNumber;
+    double layerThickness;
 
     double diskExtrusionMultiplier;
     double trackExtrusionMultiplier;
-
-    double diskLayerThickness;
-    double trackLayerThickness;
 
     double retraction;
     double retractionSpeed;
