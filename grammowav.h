@@ -121,7 +121,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		fread(&offset, 4, 1, file);
 	}
 	size_t fileSize = offset;
-	size_t samplesCount = fileSize / rate / numChannels;
+	size_t realSamplesCount = fileSize / rate / numChannels;
 
 	// -------------- start generation gcode
 	fprintf(outputfile, "G90\n"); //use absolute coordinates
@@ -178,7 +178,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_extrusion = false;
 
 	// читаю ВЕСЬ wav в оперативу (сам знаю что дофига весить будет, но мне сейчас не до оптимизации)
-	double* soundData = malloc(samplesCount * sizeof(double));
+	double* soundData = malloc(realSamplesCount * sizeof(double));
 	if (soundData == NULL) {
 		fclose(outputfile);
 		fclose(file);
@@ -196,8 +196,11 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 		soundData[currentSample] = sample / numChannels;
 		currentSample++;
-		if (currentSample >= samplesCount) break;
+		if (currentSample >= realSamplesCount) break;
 	}
+	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
+	size_t emptyTrack = numberSamplesPerturn * 2;
+	size_t samplesCount = realSamplesCount + emptyTrack;
 
 	// нармализую звук, деля его на фрагменты а потом подбирая множитель пока не упреться в предел
 	int normalize_frame = sampleRate / 8;
@@ -206,7 +209,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	double normalize_mulUp = 1 + normalize_step;
 	double normalize_mulDown = 1 - normalize_step;
 
-	for (size_t offset = 0; offset < samplesCount; offset += normalize_frame) {
+	for (size_t offset = 0; offset < realSamplesCount; offset += normalize_frame) {
 		bool soundexists = false;
 		for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
 			double value = soundData[offset + frameOffset];
@@ -227,7 +230,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 			}
 		}
 	}
-	grammowav_debugExportWav(soundData, samplesCount, sampleRate);
+	grammowav_debugExportWav(soundData, realSamplesCount, sampleRate);
 
 	// меняю настройки на трековые
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
@@ -239,17 +242,19 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
 
 	// фигачу дорожку
-	double numberSamplesPerturn = sampleRate / (disk.rpm / 60);
 	double labelRadius = disk.labelDiameter / 2;
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	while (true) {
-		for (uint8_t n = 1; n <= 2; n++) {
+		for (uint8_t n = 1; n <= (disk.matrix ? 1 : 2); n++) {
 			currentSample = 0;
 			double radius = diskRadius - (disk.trackWidth * n);
 			while (true) {
-				double sample = soundData[currentSample];
+				double sample = 0;
+				if (currentSample >= emptyTrack)
+					sample = soundData[currentSample - emptyTrack];
 
 				double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
+				if (disk.matrix) rotate = -rotate;
 				double localRadius = radius - (sample * disk.trackAmplitude);
 				gcode_moveC(outputfile, printer, sin(rotate) * localRadius, cos(rotate) * -localRadius, zPos);
 				if (!gcode_extrusion) {

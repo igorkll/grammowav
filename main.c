@@ -96,6 +96,8 @@ typedef struct {
     double trackWidth;
     double trackHeight;
     double trackAmplitude;
+
+    bool matrix;
 } disk_t;
 
 #include "util.h"

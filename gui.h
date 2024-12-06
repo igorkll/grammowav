@@ -78,7 +78,9 @@ void save_gcode(gui_object* self, HWND hwnd) {
 
             .trackWidth = 0.8,
             .trackHeight = 0.3,
-            .trackAmplitude = 0.2
+            .trackAmplitude = 0.2,
+
+            .matrix = true
         };
 
         switch (grammowav_wavToGcode(currentPath, savePath, printer, disk)) {
