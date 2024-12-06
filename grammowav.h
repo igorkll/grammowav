@@ -203,13 +203,14 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	size_t samplesCount = realSamplesCount + emptyTrack;
 
 	// нармализую звук, деля его на фрагменты а потом подбирая множитель пока не упреться в предел
-	int normalize_frame = sampleRate / 32;
+	/*
+	int normalize_frame = sampleRate / 8;
 	double normalize_step = 0.05;
 	double normalize_minProcessValue = 0.01;
 	double normalize_mulUp = 1 + normalize_step;
 	double normalize_mulDown = 1 - normalize_step;
 
-	for (size_t offset = 0; offset < realSamplesCount; offset += normalize_frame) {
+	for (size_t offset = 0; offset < realSamplesCount - normalize_frame; offset += normalize_frame) {
 		bool soundexists = false;
 		for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
 			double value = soundData[offset + frameOffset];
@@ -231,6 +232,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		}
 	}
 	grammowav_debugExportWav(soundData, realSamplesCount, sampleRate);
+	*/
 
 	// меняю настройки на трековые
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
