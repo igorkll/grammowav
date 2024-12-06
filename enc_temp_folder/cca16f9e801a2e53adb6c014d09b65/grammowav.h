@@ -245,6 +245,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	double labelRadius = disk.labelDiameter / 2;
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	double trackOffsetPerturn = trackOffset * numberSamplesPerturn;
+
 	if (trackOffsetPerturn < disk.trackAmplitude * 2) {
 		fclose(outputfile);
 		fclose(file);

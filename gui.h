@@ -71,14 +71,14 @@ void save_gcode(gui_object* self, HWND hwnd) {
         disk_t disk = {
             .rpm = 78,
 
-            .diskDiameter = 80,
+            .diskDiameter = 160,
             .holeDiameter = 8,
-            .labelDiameter = 15,
+            .labelDiameter = 40,
             .diskHeight = 0.6,
 
             .trackWidth = 0.8,
             .trackHeight = 0.3,
-            .trackAmplitude = 0.2,
+            .trackAmplitude = 0.05,
 
             .matrix = true
         };
@@ -102,6 +102,10 @@ void save_gcode(gui_object* self, HWND hwnd) {
 
             case 4:
                 MessageBoxA(hwnd, "insufficient RAM", MB_OK, MB_ICONERROR);
+                break;
+
+            case 5:
+                MessageBoxA(hwnd, "there is not enough space on disk for the specified audio", MB_OK, MB_ICONERROR);
                 break;
 
             default:
