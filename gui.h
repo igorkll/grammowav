@@ -71,16 +71,17 @@ void save_gcode(gui_object* self, HWND hwnd) {
         disk_t disk = {
             .rpm = 78,
 
-            .diskDiameter = 160,
+            .diskDiameter = 50,
             .holeDiameter = 8,
-            .labelDiameter = 40,
+            .labelDiameter = 10,
             .diskHeight = 0.6,
 
-            .trackWidth = 0.8,
+            .trackWidth = 0.2,
             .trackHeight = 0.3,
             .trackAmplitude = 0.05,
 
-            .matrix = true
+            .matrix = false,
+            .normalizeSound = true
         };
 
         switch (grammowav_wavToGcode(currentPath, savePath, printer, disk)) {

@@ -203,36 +203,36 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	size_t samplesCount = realSamplesCount + emptyTrack;
 
 	// нармализую звук, деля его на фрагменты а потом подбирая множитель пока не упреться в предел
-	/*
-	int normalize_frame = sampleRate / 8;
-	double normalize_step = 0.05;
-	double normalize_minProcessValue = 0.01;
-	double normalize_mulUp = 1 + normalize_step;
-	double normalize_mulDown = 1 - normalize_step;
+	if (disk.normalizeSound) {
+		int normalize_frame = sampleRate / 8;
+		double normalize_step = 0.05;
+		double normalize_minProcessValue = 0.01;
+		double normalize_mulUp = 1 + normalize_step;
+		double normalize_mulDown = 1 - normalize_step;
 
-	for (size_t offset = 0; offset < realSamplesCount - normalize_frame; offset += normalize_frame) {
-		bool soundexists = false;
-		for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
-			double value = soundData[offset + frameOffset];
-			if (value > normalize_minProcessValue || value < -normalize_minProcessValue) soundexists = true;
-		}
-		while (soundexists) {
-			bool overrange = false;
+		for (size_t offset = 0; offset < realSamplesCount - normalize_frame; offset += normalize_frame) {
+			bool soundexists = false;
 			for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
-				soundData[offset + frameOffset] *= normalize_mulUp;
 				double value = soundData[offset + frameOffset];
-				if (value > 1 || value < -1) overrange = true;
+				if (value > normalize_minProcessValue || value < -normalize_minProcessValue) soundexists = true;
 			}
-			if (overrange) {
+			while (soundexists) {
+				bool overrange = false;
 				for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
-					soundData[offset + frameOffset] *= normalize_mulDown;
+					soundData[offset + frameOffset] *= normalize_mulUp;
+					double value = soundData[offset + frameOffset];
+					if (value > 1 || value < -1) overrange = true;
 				}
-				break;
+				if (overrange) {
+					for (size_t frameOffset = 0; frameOffset < normalize_frame; frameOffset++) {
+						soundData[offset + frameOffset] *= normalize_mulDown;
+					}
+					break;
+				}
 			}
 		}
+		grammowav_debugExportWav(soundData, realSamplesCount, sampleRate);
 	}
-	grammowav_debugExportWav(soundData, realSamplesCount, sampleRate);
-	*/
 
 	// меняю настройки на трековые
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {

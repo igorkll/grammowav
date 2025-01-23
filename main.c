@@ -99,6 +99,7 @@ typedef struct {
 
     // this flag inverts the direction of the track and makes it only one, this approach allows you to make a die for casting plates. the trackWidth parameter is ignored with this flag
     bool matrix;
+    bool normalizeSound;
 } disk_t;
 
 #include "util.h"
