@@ -177,8 +177,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 	gcode_extrusion = false;
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
-	gcode_moveC(outputfile, printer, 0, 0, 50);
-	gcode_dmove(outputfile, printer, 50, printer.depthY - 10, 0);
+	gcode_dmove(outputfile, printer, 50, printer.depthY - 10, 50);
 
 	// читаю ВЕСЬ wav в оперативу (сам знаю что дофига весить будет, но мне сейчас не до оптимизации)
 	double* soundData = malloc(realSamplesCount * sizeof(double));
@@ -247,6 +246,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
 
 	// стираю излишки пластика перед печатью трека, но с другой стороны(потому что на прошлой уже насрано экструзией)
+	gcode_dmove(outputfile, printer, 50, printer.depthY - 10, 0);
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
 	gcode_dmove(outputfile, printer, printer.widthX - 50, printer.depthY - 10, 0);
 
@@ -267,9 +267,10 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		return 5;
 	}
 	while (true) {
+		double oldRadius;
 		for (uint8_t n = 1; n <= (disk.matrix ? 1 : 2); n++) {
 			currentSample = n == 2 ? (samplesCount - 1) : 0;
-			double radius = diskRadius - (disk.trackWidth * n);
+			double radius = (n == 2 ? oldRadius : diskRadius) - (disk.trackWidth * n);
 			while (true) {
 				double sample = 0;
 				if (currentSample >= emptyTrack)
@@ -284,15 +285,17 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 					gcode_extrusion = true;
 				}
 
-				radius -= trackOffset;
 				if (n == 2) {
+					radius += trackOffset;
 					currentSample--;
 					if (currentSample <= 0) break;
 				} else {
+					radius -= trackOffset;
 					currentSample++;
 					if (currentSample >= samplesCount) break;
 				}
 			}
+			oldRadius = radius;
 		}
 		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight) {
@@ -302,8 +305,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	gcode_extrusion = false;
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
-	gcode_moveC(outputfile, printer, 0, 0, 50);
-	gcode_move(outputfile, printer, 0, printer.depthY, 0);
+	gcode_dmove(outputfile, printer, 0, printer.depthY, 50);
+	gcode_dmove(outputfile, printer, 0, printer.depthY, 0);
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed
 	}

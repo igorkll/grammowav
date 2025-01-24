@@ -61,7 +61,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .retraction = 2,
             .retractionSpeed = 5,
 
-            .diskFan = 255,
+            .diskFan = 60,
             .trackFan = 255,
 
             .diskPrintSpeed = 20,
