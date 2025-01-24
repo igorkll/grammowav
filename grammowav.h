@@ -176,6 +176,9 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		}
 	}
 	gcode_extrusion = false;
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
+	gcode_moveC(outputfile, printer, 0, 0, 50);
+	gcode_dmove(outputfile, printer, 50, 10, 0);
 
 	// читаю ВЕСЬ wav в оперативу (сам знаю что дофига весить будет, но мне сейчас не до оптимизации)
 	double* soundData = malloc(realSamplesCount * sizeof(double));
@@ -243,7 +246,12 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_fan(outputfile, printer, printer.trackFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
 
+	// даю экструдеру пропердеться перед печатью трека
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
+	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
+
 	// фигачу дорожку
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
 	double labelRadius = disk.labelDiameter / 2;
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	double trackOffsetPerturn = trackOffset * numberSamplesPerturn;
