@@ -66,6 +66,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
 
             .diskPrintSpeed = 20,
             .trackPrintSpeed = 5,
+            .fastMoveSpeed = 300
         };
 
         disk_t disk = {

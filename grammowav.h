@@ -154,7 +154,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_extrusion = false;
 
 	// начинаю фигачить диск
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
 	double holeRadius = disk.holeDiameter / 2;
 	double diskRadius = disk.diskDiameter / 2;
 	double zPos = 0;
@@ -176,9 +176,9 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		}
 	}
 	gcode_extrusion = false;
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
 	gcode_moveC(outputfile, printer, 0, 0, 50);
-	gcode_dmove(outputfile, printer, 50, 10, 0);
+	gcode_dmove(outputfile, printer, 50, printer.depthY - 10, 0);
 
 	// читаю ВЕСЬ wav в оперативу (сам знаю что дофига весить будет, но мне сейчас не до оптимизации)
 	double* soundData = malloc(realSamplesCount * sizeof(double));
@@ -246,9 +246,9 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_fan(outputfile, printer, printer.trackFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
 
-	// даю экструдеру пропердеться перед печатью трека
+	// стираю излишки пластика перед печатью трека, но с другой стороны(потому что на прошлой уже насрано экструзией)
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
-	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
+	gcode_dmove(outputfile, printer, printer.widthX - 50, printer.depthY - 10, 0);
 
 	// фигачу дорожку
 	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
@@ -297,7 +297,8 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 
 	gcode_extrusion = false;
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
+	gcode_moveC(outputfile, printer, 0, 0, 50);
 	gcode_move(outputfile, printer, 0, printer.depthY, 0);
 	if (printer.bedTemperature > 0) {
 		fprintf(outputfile, "M140 S0\n"); //turn off heatbed

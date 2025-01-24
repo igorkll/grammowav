@@ -83,6 +83,7 @@ typedef struct {
 
     int diskPrintSpeed;
     int trackPrintSpeed;
+    int fastMoveSpeed;
 } printer_t;
 
 typedef struct {
