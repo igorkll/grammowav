@@ -270,7 +270,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		double oldRadius;
 		for (uint8_t n = 1; n <= (disk.matrix ? 1 : 2); n++) {
 			currentSample = n == 2 ? (samplesCount - 1) : 0;
-			double radius = (n == 2 ? oldRadius : diskRadius) - (disk.trackWidth * n);
+			double radius = (n == 2 ? oldRadius : diskRadius) - disk.trackWidth;
 			while (true) {
 				double sample = 0;
 				if (currentSample >= emptyTrack)
