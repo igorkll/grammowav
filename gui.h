@@ -66,7 +66,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .diskFan = 60,
             .trackFan = 255,
 
-            .diskPrintSpeed = 20,
+            .diskPrintSpeed = 10,
             .trackPrintSpeed = 5,
             .fastMoveSpeed = 300
         };
@@ -74,13 +74,13 @@ void save_gcode(gui_object* self, HWND hwnd) {
         disk_t disk = {
             .rpm = 78,
 
-            .diskDiameter = 50,
+            .diskDiameter = 200,
             .holeDiameter = 8,
-            .labelDiameter = 10,
-            .diskLayers = 2,
+            .labelDiameter = 50,
+            .diskLayers = 1,
 
-            .trackWidth = 0.5,
-            .trackAmplitude = 0.05,
+            .trackWidth = 1,
+            .trackAmplitude = 0.5,
 
             .matrix = false,
             .normalizeSound = true

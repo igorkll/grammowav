@@ -226,6 +226,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 					if (!gcode_extrusion) {
 						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
 						gcode_extrusion = true;
+						gcode_autoUp = false;
 					}
 				}
 			}
@@ -237,6 +238,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 					if (!gcode_extrusion) {
 						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
 						gcode_extrusion = true;
+						gcode_autoUp = false;
 					}
 				}
 			}
@@ -244,6 +246,9 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		fromCenter = !fromCenter;
 		gcode_extrusion = false;
 	}
+	gcode_autoUp = true;
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
+	gcode_dmove(outputfile, printer, 50, printer.depthY - 10, 10);
 
 	// меняю настройки на трековые
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
@@ -254,6 +259,11 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	gcode_fan(outputfile, printer, printer.trackFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
 	gcode_layerThickness(outputfile, printer, printer.trackLayerThickness);
+
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
+	gcode_dmove(outputfile, printer, 50, printer.depthY -  10, 0);
+	gcode_dmove(outputfile, printer, printer.widthX - 50, printer.depthY -  10, 0);
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
 
 	// фигачу дорожку
 	double labelRadius = disk.labelDiameter / 2;

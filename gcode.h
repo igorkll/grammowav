@@ -2,6 +2,7 @@
 
 #define _GCODE_MUL 1
 
+bool gcode_autoUp = true;
 bool gcode_extrusion = false;
 bool gcode_needRetracted = false;
 bool gcode_needDeretracted = false;
@@ -52,7 +53,9 @@ void gcode_move(FILE* outputfile, printer_t printer, double x, double y, double 
             gcode_needRetracted = false;
             //gcode_needDeretracted = true;
         }
-        fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", _gcode_currentX, _gcode_currentY, _gcode_currentZ + 10);
+        if (gcode_autoUp) {
+            fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", _gcode_currentX, _gcode_currentY, _gcode_currentZ + 10);
+        }
         fprintf(outputfile, "G0 X%lf Y%lf Z%lf\n", x, y, z);
     }
     _gcode_currentX = x;
@@ -71,6 +74,10 @@ void gcode_dmove(FILE* outputfile, printer_t printer, double x, double y, double
     _gcode_currentX = x;
     _gcode_currentY = y;
     _gcode_currentZ = z;
+}
+
+void gcode_add(FILE* outputfile, printer_t printer, double x, double y, double z) {
+    gcode_move(outputfile, printer, _gcode_currentX + x, _gcode_currentY + y, _gcode_currentZ + z);
 }
 
 void gcode_moveC(FILE* outputfile, printer_t printer, double x, double y, double z) {
