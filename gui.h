@@ -47,13 +47,15 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .widthX = 220,
             .depthY = 220,
             .heightZ = 250,
-            .zOffset = 0.3 * 0.9,
+            .zOffset = 0,
 
             .nozzleDiameter = 0.4,
             .filamentDiameter = 1.75,
             .lineDistance = 0.4 * 0.9,
             .circleFacesNumber = 32,
-            .layerThickness = 0.3,
+
+            .diskLayerThickness = 0.3,
+            .trackLayerThickness = 0.3,
 
             .diskExtrusionMultiplier = 1,
             .trackExtrusionMultiplier = 1,
@@ -75,10 +77,9 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .diskDiameter = 50,
             .holeDiameter = 8,
             .labelDiameter = 10,
-            .diskHeight = 0.6,
+            .diskLayers = 2,
 
             .trackWidth = 0.5,
-            .trackHeight = 0.3,
             .trackAmplitude = 0.05,
 
             .matrix = false,

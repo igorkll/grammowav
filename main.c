@@ -66,7 +66,9 @@ typedef struct {
     double filamentDiameter;
     double lineDistance;
     int circleFacesNumber;
-    double layerThickness;
+
+    double diskLayerThickness;
+    double trackLayerThickness;
 
     double diskExtrusionMultiplier;
     double trackExtrusionMultiplier;
@@ -92,10 +94,9 @@ typedef struct {
     double diskDiameter;
     double holeDiameter;
     double labelDiameter;
-    double diskHeight;
+    double diskLayers;
 
     double trackWidth;
-    double trackHeight;
     double trackAmplitude;
 
     // this flag inverts the direction of the track and makes it only one, this approach allows you to make a die for casting plates. the trackWidth parameter is ignored with this flag

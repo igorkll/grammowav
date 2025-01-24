@@ -123,62 +123,6 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	size_t fileSize = offset;
 	size_t realSamplesCount = fileSize / rate / numChannels;
 
-	// -------------- start generation gcode
-	fprintf(outputfile, "G90\n"); //use absolute coordinates
-	fprintf(outputfile, "M83\n"); //extruder relative mode
-
-	if (printer.bedTemperature > 0) {
-		fprintf(outputfile, "M140 S%i\n", printer.bedTemperature); //set bed temp
-		fprintf(outputfile, "M190 S%i\n", printer.bedTemperature); //wait for bed temp
-	}
-	bool needDisableTemperature = false;
-	if (printer.diskNozzleTemperature > 0) {
-		needDisableTemperature = true;
-		fprintf(outputfile, "M104 S%i\n", printer.diskNozzleTemperature); //set extruder temp
-		fprintf(outputfile, "M109 S%i\n", printer.diskNozzleTemperature); //wait for extruder temp
-	}
-
-	fprintf(outputfile, "G28\n");
-
-	// настраиваю
-	gcode_fan(outputfile, printer, printer.diskFan);
-	gcode_extrusionMultiplier(outputfile, printer, printer.diskExtrusionMultiplier);
-	gcode_layerThickness(outputfile, printer, printer.layerThickness);
-	
-	// даю экструдеру пропердеться
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
-	gcode_dmove(outputfile, printer, 50, 10, 0);
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
-	gcode_extrusion = true;
-	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
-	gcode_extrusion = false;
-
-	// начинаю фигачить диск
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
-	double holeRadius = disk.holeDiameter / 2;
-	double diskRadius = disk.diskDiameter / 2;
-	double zPos = 0;
-	while (true) {
-		for (double radius = diskRadius; radius > holeRadius; radius -= printer.lineDistance) {
-			for (size_t i = 0; i < printer.circleFacesNumber; i++) {
-				double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-				gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-				if (!gcode_extrusion) {
-					gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
-					gcode_extrusion = true;
-				}
-			}
-		}
-		gcode_extrusion = false;
-		zPos += printer.layerThickness;
-		if (zPos >= disk.diskHeight - disk.trackHeight) {
-			break;
-		}
-	}
-	gcode_extrusion = false;
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
-	gcode_dmove(outputfile, printer, 50, printer.depthY - 10, 50);
-
 	// читаю ВЕСЬ wav в оперативу (сам знаю что дофига весить будет, но мне сейчас не до оптимизации)
 	double* soundData = malloc(realSamplesCount * sizeof(double));
 	if (soundData == NULL) {
@@ -236,6 +180,71 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		grammowav_debugExportWav(soundData, realSamplesCount, sampleRate);
 	}
 
+	// -------------- start generation gcode
+	fprintf(outputfile, "G90\n"); //use absolute coordinates
+	fprintf(outputfile, "M83\n"); //extruder relative mode
+
+	if (printer.bedTemperature > 0) {
+		fprintf(outputfile, "M140 S%i\n", printer.bedTemperature); //set bed temp
+		fprintf(outputfile, "M190 S%i\n", printer.bedTemperature); //wait for bed temp
+	}
+	bool needDisableTemperature = false;
+	if (printer.diskNozzleTemperature > 0) {
+		needDisableTemperature = true;
+		fprintf(outputfile, "M104 S%i\n", printer.diskNozzleTemperature); //set extruder temp
+		fprintf(outputfile, "M109 S%i\n", printer.diskNozzleTemperature); //wait for extruder temp
+	}
+
+	fprintf(outputfile, "G28\n");
+
+	// настраиваю
+	gcode_fan(outputfile, printer, printer.diskFan);
+	gcode_extrusionMultiplier(outputfile, printer, printer.diskExtrusionMultiplier);
+	gcode_layerThickness(outputfile, printer, printer.diskLayerThickness);
+	
+	// даю экструдеру пропердеться
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
+	gcode_dmove(outputfile, printer, 50, 10, 0);
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
+	gcode_extrusion = true;
+	gcode_move(outputfile, printer, printer.widthX - 50, 10, 0);
+	gcode_extrusion = false;
+
+	// начинаю фигачить диск
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
+	double holeRadius = disk.holeDiameter / 2;
+	double diskRadius = disk.diskDiameter / 2;
+	double zPos = 0;
+	bool fromCenter = true;
+	for (size_t layer = 0; layer < disk.diskLayers; layer++) {
+		zPos += printer.diskLayerThickness;
+		if (fromCenter) {
+			for (double radius = holeRadius; radius <= diskRadius; radius += printer.lineDistance) {
+				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
+					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
+					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
+					if (!gcode_extrusion) {
+						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
+						gcode_extrusion = true;
+					}
+				}
+			}
+		} else {
+			for (double radius = diskRadius; radius >= holeRadius; radius -= printer.lineDistance) {
+				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
+					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
+					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
+					if (!gcode_extrusion) {
+						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
+						gcode_extrusion = true;
+					}
+				}
+			}
+		}
+		fromCenter = !fromCenter;
+		gcode_extrusion = false;
+	}
+
 	// меняю настройки на трековые
 	if (printer.trackNozzleTemperature != printer.diskNozzleTemperature && printer.trackNozzleTemperature > 0) {
 		needDisableTemperature = true;
@@ -244,14 +253,9 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 	gcode_fan(outputfile, printer, printer.trackFan);
 	gcode_extrusionMultiplier(outputfile, printer, printer.trackExtrusionMultiplier);
-
-	// стираю излишки пластика перед печатью трека, но с другой стороны(потому что на прошлой уже насрано экструзией)
-	gcode_dmove(outputfile, printer, 50, printer.depthY - 10, 0);
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 10));
-	gcode_dmove(outputfile, printer, printer.widthX - 50, printer.depthY - 10, 0);
+	gcode_layerThickness(outputfile, printer, printer.trackLayerThickness);
 
 	// фигачу дорожку
-	gcode_speed(outputfile, printer, util_convertSpeed(printer, 100));
 	double labelRadius = disk.labelDiameter / 2;
 	double trackOffset = (diskRadius - labelRadius) / samplesCount;
 	double trackOffsetPerturn = trackOffset * numberSamplesPerturn;
@@ -266,41 +270,37 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		fclose(file);
 		return 5;
 	}
-	while (true) {
-		double oldRadius;
-		for (uint8_t n = 1; n <= (disk.matrix ? 1 : 2); n++) {
-			currentSample = n == 2 ? (samplesCount - 1) : 0;
-			double radius = (n == 2 ? oldRadius : diskRadius) - disk.trackWidth;
-			while (true) {
-				double sample = 0;
-				if (currentSample >= emptyTrack)
-					sample = soundData[currentSample - emptyTrack];
 
-				double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
-				if (disk.matrix) rotate = -rotate;
-				double localRadius = radius - (sample * disk.trackAmplitude);
-				gcode_moveC(outputfile, printer, sin(rotate) * localRadius, cos(rotate) * -localRadius, zPos);
-				if (!gcode_extrusion) {
-					gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.trackPrintSpeed));
-					gcode_extrusion = true;
-				}
+	zPos += printer.trackLayerThickness;
+	double oldRadius;
+	for (uint8_t n = 1; n <= (disk.matrix ? 1 : 2); n++) {
+		currentSample = n == 2 ? (samplesCount - 1) : 0;
+		double radius = (n == 2 ? oldRadius : diskRadius) - disk.trackWidth;
+		while (true) {
+			double sample = 0;
+			if (currentSample >= emptyTrack)
+				sample = soundData[currentSample - emptyTrack];
 
-				if (n == 2) {
-					radius += trackOffset;
-					currentSample--;
-					if (currentSample <= 0) break;
-				} else {
-					radius -= trackOffset;
-					currentSample++;
-					if (currentSample >= samplesCount) break;
-				}
+			double rotate = (((double)currentSample) / numberSamplesPerturn) * M_PI * 2;
+			if (disk.matrix) rotate = -rotate;
+			double localRadius = radius - (sample * disk.trackAmplitude);
+			gcode_moveC(outputfile, printer, sin(rotate) * localRadius, cos(rotate) * -localRadius, zPos);
+			if (!gcode_extrusion) {
+				gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.trackPrintSpeed));
+				gcode_extrusion = true;
 			}
-			oldRadius = radius;
+
+			if (n == 2) {
+				radius += trackOffset;
+				currentSample--;
+				if (currentSample <= 0) break;
+			} else {
+				radius -= trackOffset;
+				currentSample++;
+				if (currentSample >= samplesCount) break;
+			}
 		}
-		zPos += printer.layerThickness;
-		if (zPos >= disk.diskHeight) {
-			break;
-		}
+		oldRadius = radius;
 	}
 
 	gcode_extrusion = false;
