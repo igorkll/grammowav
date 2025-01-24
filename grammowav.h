@@ -150,7 +150,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 
 	// нармализую звук, деля его на фрагменты а потом подбирая множитель пока не упреться в предел
 	if (disk.normalizeSound) {
-		int normalize_frame = sampleRate / 8;
+		int normalize_frame = sampleRate / 64;
 		double normalize_step = 0.05;
 		double normalize_minProcessValue = 0.01;
 		double normalize_mulUp = 1 + normalize_step;

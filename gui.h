@@ -74,13 +74,13 @@ void save_gcode(gui_object* self, HWND hwnd) {
         disk_t disk = {
             .rpm = 78,
 
-            .diskDiameter = 200,
+            .diskDiameter = 100,
             .holeDiameter = 8,
             .labelDiameter = 50,
             .diskLayers = 1,
 
-            .trackWidth = 1,
-            .trackAmplitude = 0.5,
+            .trackWidth = 0.8,
+            .trackAmplitude = 0.2,
 
             .matrix = false,
             .normalizeSound = true
