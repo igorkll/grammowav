@@ -268,7 +268,7 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 	while (true) {
 		for (uint8_t n = 1; n <= (disk.matrix ? 1 : 2); n++) {
-			currentSample = 0;
+			currentSample = n == 2 ? (samplesCount - 1) : 0;
 			double radius = diskRadius - (disk.trackWidth * n);
 			while (true) {
 				double sample = 0;
@@ -285,10 +285,14 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 				}
 
 				radius -= trackOffset;
-				currentSample++;
-				if (currentSample >= samplesCount) break;
+				if (n == 2) {
+					currentSample--;
+					if (currentSample <= 0) break;
+				} else {
+					currentSample++;
+					if (currentSample >= samplesCount) break;
+				}
 			}
-			gcode_extrusion = false;
 		}
 		zPos += printer.layerThickness;
 		if (zPos >= disk.diskHeight) {
