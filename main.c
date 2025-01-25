@@ -10,8 +10,10 @@
 #include <math.h>
 
 #define APP_NAME L"grammowav"
-#define APP_WIDTH 600
-#define APP_HEIGHT 400
+#define APP_RWIDTH 600
+#define APP_RHEIGHT 400
+#define APP_WIDTH (APP_RWIDTH - 15)
+#define APP_HEIGHT (APP_RHEIGHT - 37)
 #define APP_PATHLEN 512
 #define APP_FONTSIZE 8
 
@@ -175,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     util_flush(hwnd);
                     break;
                 } else if (object->sceneSwitch) {
-                    if (random(0, 10) == 0) {
+                    if (random(0, 0) == 0) {
                         gui_current = gui_fun;
                         gui_currentLen = ARRAY_SIZE(gui_fun);
                     } else {
@@ -322,9 +324,9 @@ void initGraphic(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, i
 
     RegisterClassW(&wc);
     HWND hwnd = CreateWindowW(wc.lpszClassName, APP_NAME, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
-        (GetSystemMetrics(SM_CXSCREEN) / 2) - (APP_WIDTH / 2),
-        (GetSystemMetrics(SM_CYSCREEN) / 2) - (APP_HEIGHT / 2),
-        APP_WIDTH, APP_HEIGHT, NULL, NULL, hInstance, NULL);
+        (GetSystemMetrics(SM_CXSCREEN) / 2) - (APP_RWIDTH / 2),
+        (GetSystemMetrics(SM_CYSCREEN) / 2) - (APP_RHEIGHT / 2),
+        APP_RWIDTH, APP_RHEIGHT, NULL, NULL, hInstance, NULL);
 
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);

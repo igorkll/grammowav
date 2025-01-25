@@ -190,7 +190,7 @@ gui_object gui_grammowav[] = {
     {
         .type = gui_button,
         .x = 8,
-        .y = APP_HEIGHT - 25 - 8 - 40,
+        .y = APP_HEIGHT - 25 - 8,
         .sizeX = 200,
         .sizeY = 25,
         .text = "membrane generator"
@@ -206,8 +206,8 @@ gui_object gui_grammowav[] = {
     },
     {
         .type = gui_button,
-        .x = APP_WIDTH - 100 - 8 - 16,
-        .y = APP_HEIGHT - 25 - 8 - 40,
+        .x = APP_WIDTH - 100 - 8,
+        .y = APP_HEIGHT - 25 - 8,
         .sizeX = 100,
         .sizeY = 25,
         .text = "save gcode",
@@ -365,8 +365,8 @@ gui_object gui_membraneGenerator[] = {
     },
     {
         .type = gui_button,
-        .x = APP_WIDTH - 100 - 8 - 16,
-        .y = APP_HEIGHT - 25 - 8 - 40,
+        .x = APP_WIDTH - 100 - 8,
+        .y = APP_HEIGHT - 25 - 8,
         .sizeX = 100,
         .sizeY = 25,
         .text = "save gcode",
@@ -374,7 +374,7 @@ gui_object gui_membraneGenerator[] = {
     }
 };
 
-#define funitemSize (APP_HEIGHT / 6)
+#define funitemSize ((APP_HEIGHT / 6) + 2)
 #define funitemSizeM (funitemSize - 1)
 
 gui_object gui_fun[] = {
@@ -433,9 +433,16 @@ gui_object gui_fun[] = {
         .y = 8,
         .sizeX = 100,
         .sizeY = 25,
-        .text = "< back",
+        .text = "close",
 
         .toTarget = true
+    },
+    {
+        .type = gui_text,
+        .x = 8 + 8 + 100,
+        .y = 15,
+        .sizeY = 16,
+        .text = " JUST FOR FUN :) ",
     }
 };
 
