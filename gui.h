@@ -167,12 +167,12 @@ void save_membrane(gui_object* self, HWND hwnd) {
         };
 
         membrane_t membrane = {
-            .holeDiameter = 0,
+            .holeDiameter = 1,
 
-            .membraneDiameter = 50,
+            .membraneDiameter = 60,
             .membraneLayers = 1,
 
-            .pistonDiameter = 30,
+            .pistonDiameter = 40,
             .pistonLayers = 2
         };
 
