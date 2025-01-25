@@ -23,7 +23,8 @@ typedef enum {
     gui_button,
     gui_text,
     gui_checkbox,
-    gui_image
+    gui_image,
+    gui_plane,
 } gui_item_type;
 
 typedef struct gui_object gui_object;
@@ -42,6 +43,7 @@ struct gui_object {
     bool offsetSizeX;
     bool offsetSizeY;
 
+    bool toTarget;
     bool onceEnable;
     int onceId;
 
@@ -50,6 +52,8 @@ struct gui_object {
 
     gui_object* sceneSwitch;
     size_t sceneLen;
+
+    uint32_t color;
 };
 
 typedef struct {
@@ -109,6 +113,8 @@ typedef struct {
 
 
 typedef struct {
+    double holeDiameter;
+
     double membraneDiameter;
     double membraneLayers;
 
@@ -129,6 +135,10 @@ HBRUSH objBrush;
 HPEN framePen;
 HFONT hFont;
 HBITMAP images[1];
+
+int random(int min, int max) {
+    return (rand() % (max - min + 1)) + min;
+}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     HDC hdc;
@@ -156,7 +166,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 } else {
                     object->state = true;
                 }
-                if (object->callback) object->callback(object, hwnd);
+                if (object->callback) {
+                    object->callback(object, hwnd);
+                }
+                if (object->toTarget) {
+                    gui_current = gui_target;
+                    gui_currentLen = gui_targetLen;
+                    util_flush(hwnd);
+                    break;
+                } else if (object->sceneSwitch) {
+                    if (random(0, 10) == 0) {
+                        gui_current = gui_fun;
+                        gui_currentLen = ARRAY_SIZE(gui_fun);
+                    } else {
+                        gui_current = object->sceneSwitch;
+                        gui_currentLen = object->sceneLen;
+                    }
+                    gui_target = object->sceneSwitch;
+                    gui_targetLen = object->sceneLen;
+                    util_flush(hwnd);
+                    break;
+                }
                 util_flush(hwnd);
             }
         }
@@ -225,7 +255,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     break;
                 }
 
-                                 
+                case gui_plane: {
+                    uint8_t red = (object->color >> 16) % 256;
+                    uint8_t green = (object->color >> 8) % 256;
+                    uint8_t blue = object->color % 256;
+                    HBRUSH brush = CreateSolidBrush(RGB(red, green, blue));
+                    RECT rect = {
+                        .top = object->y,
+                        .left = object->x,
+                        .right = object->x + (object->sizeX - 1),
+                        .bottom = object->y + (object->sizeY - 1)
+                    };
+                    FillRect(hdc, &rect, brush);
+                    DeleteObject(brush);
+                }
             }
         }
 
@@ -306,7 +349,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     gui_current = gui_grammowav;
     gui_currentLen = ARRAY_SIZE(gui_grammowav);
-
+    gui_init();
     initScene(gui_current, gui_currentLen);
     initScene(gui_membraneGenerator, ARRAY_SIZE(gui_membraneGenerator));
     initGraphic(hInstance, hPrevInstance, pCmdLine, nCmdShow);

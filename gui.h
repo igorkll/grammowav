@@ -122,10 +122,79 @@ void save_gcode(gui_object* self, HWND hwnd) {
     }
 }
 
+void save_membrane(gui_object* self, HWND hwnd) {
+    OPENFILENAMEA ofn = { 0 };
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwnd;
+    ofn.lpstrFilter = "gcode membrane (*.gcode)\0*.gcode\0";
+    ofn.lpstrTitle = NULL;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+    ofn.lpstrFile = savePath;
+    ofn.nMaxFile = APP_PATHLEN;
+
+    if (GetSaveFileNameA(&ofn)) {
+        printer_t printer = {
+            .bedTemperature = 65,
+            .diskNozzleTemperature = 215,
+            .trackNozzleTemperature = 215,
+
+            .widthX = 220,
+            .depthY = 220,
+            .heightZ = 250,
+            .zOffset = 0,
+
+            .nozzleDiameter = 0.4,
+            .filamentDiameter = 1.75,
+            .lineDistance = 0.4 * 0.9,
+            .circleFacesNumber = 32,
+
+            .diskLayerThickness = 0.3,
+            .trackLayerThickness = 0.3,
+
+            .diskExtrusionMultiplier = 1,
+            .trackExtrusionMultiplier = 1,
+
+            .retraction = 2,
+            .retractionSpeed = 5,
+
+            .diskFan = 60,
+            .trackFan = 60,
+
+            .diskPrintSpeed = 20,
+            .trackPrintSpeed = 20,
+            .fastMoveSpeed = 300
+        };
+
+        membrane_t membrane = {
+            .holeDiameter = 0,
+
+            .membraneDiameter = 50,
+            .membraneLayers = 1,
+
+            .pistonDiameter = 30,
+            .pistonLayers = 2
+        };
+
+        handleError(hwnd, membrane_generate(savePath, printer, membrane));
+    }
+}
+
 gui_object* gui_current;
 size_t gui_currentLen;
 
+gui_object* gui_target;
+size_t gui_targetLen;
+
 gui_object gui_grammowav[] = {
+    {
+        .type = gui_button,
+        .x = 8,
+        .y = APP_HEIGHT - 25 - 8 - 40,
+        .sizeX = 200,
+        .sizeY = 25,
+        .text = "membrane generator"
+    },
     {
         .type = gui_button,
         .x = 8,
@@ -279,17 +348,6 @@ gui_object gui_grammowav[] = {
         .onceEnable = true,
         .onceId = 2,
         .data = 55
-    },
-    {
-        .type = gui_button,
-        .x = APP_WIDTH - 200 - 8 - 16,
-        .y = 8,
-        .sizeX = 200,
-        .sizeY = 25,
-        .text = "membrane generator",
-
-        .sceneSwitch = gui_membraneGenerator,
-        .sceneSwitch = ARRAY_SIZE(gui_membraneGenerator)
     }
 };
 
@@ -303,6 +361,85 @@ gui_object gui_membraneGenerator[] = {
         .text = "< back",
         
         .sceneSwitch = gui_grammowav,
-        .sceneSwitch = ARRAY_SIZE(gui_grammowav)
+        .sceneLen = ARRAY_SIZE(gui_grammowav)
+    },
+    {
+        .type = gui_button,
+        .x = APP_WIDTH - 100 - 8 - 16,
+        .y = APP_HEIGHT - 25 - 8 - 40,
+        .sizeX = 100,
+        .sizeY = 25,
+        .text = "save gcode",
+        .callback = save_membrane
     }
 };
+
+#define funitemSize (APP_HEIGHT / 6)
+#define funitemSizeM (funitemSize - 1)
+
+gui_object gui_fun[] = {
+    {
+        .type = gui_plane,
+        .x = 0,
+        .y = 0 * funitemSizeM,
+        .sizeX = APP_WIDTH,
+        .sizeY = funitemSize,
+        .color = 0xe40303
+    },
+    {
+        .type = gui_plane,
+        .x = 0,
+        .y = 1 * funitemSizeM,
+        .sizeX = APP_WIDTH,
+        .sizeY = funitemSize,
+        .color = 0xff8c00
+    },
+    {
+        .type = gui_plane,
+        .x = 0,
+        .y = 2 * funitemSizeM,
+        .sizeX = APP_WIDTH,
+        .sizeY = funitemSize,
+        .color = 0xffed00
+    },
+    {
+        .type = gui_plane,
+        .x = 0,
+        .y = 3 * funitemSizeM,
+        .sizeX = APP_WIDTH,
+        .sizeY = funitemSize,
+        .color = 0x008026
+    },
+    {
+        .type = gui_plane,
+        .x = 0,
+        .y = 4 * funitemSizeM,
+        .sizeX = APP_WIDTH,
+        .sizeY = funitemSize,
+        .color = 0x004dff
+    },
+    {
+        .type = gui_plane,
+        .x = 0,
+        .y = 5 * funitemSizeM,
+        .sizeX = APP_WIDTH,
+        .sizeY = funitemSize,
+        .color = 0x750787
+    },
+
+    {
+        .type = gui_button,
+        .x = 8,
+        .y = 8,
+        .sizeX = 100,
+        .sizeY = 25,
+        .text = "< back",
+
+        .toTarget = true
+    }
+};
+
+void gui_init() {
+    gui_grammowav[0].sceneSwitch = gui_membraneGenerator;
+    gui_grammowav[0].sceneLen = ARRAY_SIZE(gui_membraneGenerator);
+}

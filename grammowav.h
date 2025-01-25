@@ -181,6 +181,10 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 	}
 
 	// -------------- start generation gcode
+
+	gcode_autoUp = true;
+	gcode_extrusion = false;
+
 	fprintf(outputfile, "G90\n"); //use absolute coordinates
 	fprintf(outputfile, "M83\n"); //extruder relative mode
 
