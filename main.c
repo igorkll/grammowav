@@ -177,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     util_flush(hwnd);
                     break;
                 } else if (object->sceneSwitch) {
-                    if (random(0, 0) == 0) {
+                    if (random(0, 10) == 0) {
                         gui_current = gui_fun;
                         gui_currentLen = ARRAY_SIZE(gui_fun);
                     } else {
