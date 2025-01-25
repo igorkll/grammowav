@@ -21,6 +21,38 @@ void load_wav(gui_object* self, HWND hwnd) {
     }
 }
 
+void handleError(HWND hwnd, int code) {
+    switch (code) {
+        case 0:
+            MessageBoxA(hwnd, "the file was saved successfully", MB_OK, MB_OK);
+            break;
+
+        case 1:
+            MessageBoxA(hwnd, "the wav file could not be opened", MB_OK, MB_ICONERROR);
+            break;
+
+        case 2:
+            MessageBoxA(hwnd, "the stl file could not be saved", MB_OK, MB_ICONERROR);
+            break;
+
+        case 3:
+            MessageBoxA(hwnd, "the beginning of the audio data could not be found", MB_OK, MB_ICONERROR);
+            break;
+
+        case 4:
+            MessageBoxA(hwnd, "insufficient RAM", MB_OK, MB_ICONERROR);
+            break;
+
+        case 5:
+            MessageBoxA(hwnd, "there is not enough space on disk for the specified audio", MB_OK, MB_ICONERROR);
+            break;
+
+        default:
+            MessageBoxA(hwnd, "unknown error", MB_OK, MB_ICONERROR);
+            break;
+    }
+}
+
 char savePath[APP_PATHLEN];
 void save_gcode(gui_object* self, HWND hwnd) {
     if (!fileSelected) {
@@ -66,7 +98,7 @@ void save_gcode(gui_object* self, HWND hwnd) {
             .diskFan = 60,
             .trackFan = 255,
 
-            .diskPrintSpeed = 10,
+            .diskPrintSpeed = 20,
             .trackPrintSpeed = 5,
             .fastMoveSpeed = 300
         };
@@ -74,52 +106,26 @@ void save_gcode(gui_object* self, HWND hwnd) {
         disk_t disk = {
             .rpm = 78,
 
-            .diskDiameter = 100,
+            .diskDiameter = 120,
             .holeDiameter = 8,
             .labelDiameter = 50,
             .diskLayers = 1,
 
             .trackWidth = 0.8,
-            .trackAmplitude = 0.2,
+            .trackAmplitude = 0.1,
 
             .matrix = false,
             .normalizeSound = true
         };
 
-        switch (grammowav_wavToGcode(currentPath, savePath, printer, disk)) {
-            case 0:
-                MessageBoxA(hwnd, "the file was saved successfully", MB_OK, MB_OK);
-                break;
-
-            case 1:
-                MessageBoxA(hwnd, "the wav file could not be opened", MB_OK, MB_ICONERROR);
-                break;
-
-            case 2:
-                MessageBoxA(hwnd, "the stl file could not be saved", MB_OK, MB_ICONERROR);
-                break;
-
-            case 3:
-                MessageBoxA(hwnd, "the beginning of the audio data could not be found", MB_OK, MB_ICONERROR);
-                break;
-
-            case 4:
-                MessageBoxA(hwnd, "insufficient RAM", MB_OK, MB_ICONERROR);
-                break;
-
-            case 5:
-                MessageBoxA(hwnd, "there is not enough space on disk for the specified audio", MB_OK, MB_ICONERROR);
-                break;
-
-            default:
-                MessageBoxA(hwnd, "unknown error", MB_OK, MB_ICONERROR);
-                break;
-
-        }
+        handleError(hwnd, grammowav_wavToGcode(currentPath, savePath, printer, disk));
     }
 }
 
-gui_object gui_objects[] = {
+gui_object* gui_current;
+size_t gui_currentLen;
+
+gui_object gui_grammowav[] = {
     {
         .type = gui_button,
         .x = 8,
@@ -273,5 +279,30 @@ gui_object gui_objects[] = {
         .onceEnable = true,
         .onceId = 2,
         .data = 55
+    },
+    {
+        .type = gui_button,
+        .x = APP_WIDTH - 200 - 8 - 16,
+        .y = 8,
+        .sizeX = 200,
+        .sizeY = 25,
+        .text = "membrane generator",
+
+        .sceneSwitch = gui_membraneGenerator,
+        .sceneSwitch = ARRAY_SIZE(gui_membraneGenerator)
+    }
+};
+
+gui_object gui_membraneGenerator[] = {
+    {
+        .type = gui_button,
+        .x = 8,
+        .y = 8,
+        .sizeX = 100,
+        .sizeY = 25,
+        .text = "< back",
+        
+        .sceneSwitch = gui_grammowav,
+        .sceneSwitch = ARRAY_SIZE(gui_grammowav)
     }
 };

@@ -47,6 +47,9 @@ struct gui_object {
 
     int data;
     int id;
+
+    gui_object* sceneSwitch;
+    size_t sceneLen;
 };
 
 typedef struct {
@@ -104,9 +107,19 @@ typedef struct {
     bool normalizeSound;
 } disk_t;
 
+
+typedef struct {
+    double membraneDiameter;
+    double membraneLayers;
+
+    double pistonDiameter;
+    double pistonLayers;
+} membrane_t;
+
 #include "util.h"
 #include "gcode.h"
 #include "grammowav.h"
+#include "membrane.h"
 #include "gui.h"
 
 HBRUSH checkboxBrush;
@@ -127,12 +140,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         int xPos = GET_X_LPARAM(lParam);
         int yPos = GET_Y_LPARAM(lParam);
 
-        for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
-            gui_object* object = &gui_objects[index];
+        for (size_t index = 0; index < gui_currentLen; index++) {
+            gui_object* object = &gui_current[index];
             if (xPos >= object->x && yPos >= object->y && xPos < object->x + object->sizeX && yPos < object->y + object->sizeY) {
                 if (object->onceEnable) {
-                    for (size_t index2 = 0; index2 < ARRAY_SIZE(gui_objects); index2++) {
-                        gui_object* object2 = &gui_objects[index2];
+                    for (size_t index2 = 0; index2 < gui_currentLen; index2++) {
+                        gui_object* object2 = &gui_current[index2];
                         if (object2->onceEnable && index2 != index && object2->onceId == object->onceId) {
                             object2->state = false;
                         }
@@ -158,8 +171,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         SetBkColor(hdc, RGB(255, 255, 255));
         SetTextColor(hdc, RGB(0, 0, 0));
 
-        for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
-            gui_object* object = &gui_objects[index];
+        for (size_t index = 0; index < gui_currentLen; index++) {
+            gui_object* object = &gui_current[index];
             switch (object->type) {
                 case gui_button : {
                     SelectObject(hdc, objBrush);
@@ -274,12 +287,10 @@ void initGraphic(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, i
     UpdateWindow(hwnd);
 }
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
-    images[0] = LoadImageA(hInstance, "grammowav.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-
+void initScene(gui_object* objs, size_t size) {
     gui_object* previous = NULL;
-    for (size_t index = 0; index < ARRAY_SIZE(gui_objects); index++) {
-        gui_object* object = &gui_objects[index];
+    for (size_t index = 0; index < size; index++) {
+        gui_object* object = &objs[index];
         if (object->offset) {
             object->x += previous->x;
             object->y += previous->y;
@@ -288,7 +299,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         }
         previous = object;
     }
+}
 
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+    images[0] = LoadImageA(hInstance, "grammowav.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+    gui_current = gui_grammowav;
+    gui_currentLen = ARRAY_SIZE(gui_grammowav);
+
+    initScene(gui_current, gui_currentLen);
+    initScene(gui_membraneGenerator, ARRAY_SIZE(gui_membraneGenerator));
     initGraphic(hInstance, hPrevInstance, pCmdLine, nCmdShow);
 
     MSG msg;

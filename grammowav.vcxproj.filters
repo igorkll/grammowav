@@ -41,6 +41,9 @@
     <ClInclude Include="gcode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="membrane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="IDI_ICON1" />
