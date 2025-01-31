@@ -122,6 +122,9 @@ typedef struct {
 
     double pistonDiameter;
     double pistonLayers;
+
+    double sealSize;
+    double sealLayers;
 } membrane_t;
 
 #include "util.h"

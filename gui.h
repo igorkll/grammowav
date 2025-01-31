@@ -146,8 +146,8 @@ void save_membrane(gui_object* self, HWND hwnd) {
 
             .nozzleDiameter = 0.4,
             .filamentDiameter = 1.75,
-            .lineDistance = 0.4 * 0.9,
-            .circleFacesNumber = 32,
+            .lineDistance = 0.4 * 0.95,
+            .circleFacesNumber = 256,
 
             .diskLayerThickness = 0.3,
             .trackLayerThickness = 0.3,
@@ -169,11 +169,14 @@ void save_membrane(gui_object* self, HWND hwnd) {
         membrane_t membrane = {
             .holeDiameter = 1,
 
-            .membraneDiameter = 60,
+            .membraneDiameter = 58,
             .membraneLayers = 1,
 
             .pistonDiameter = 40,
-            .pistonLayers = 2
+            .pistonLayers = 2,
+
+            .sealSize = 2,
+            .sealLayers = 2
         };
 
         handleError(hwnd, membrane_generate(savePath, printer, membrane));

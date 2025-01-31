@@ -59,6 +59,18 @@ void grammowav_debugExportWav(double* samples, size_t samplesCount, uint32_t sam
 	fclose(outputfile);
 }
 
+void grammowav_circle(FILE* outputfile, printer_t printer, double zPos, double radius, int speed) {
+	for (size_t i = 0; i < printer.circleFacesNumber; i++) {
+		double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
+		gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
+		if (!gcode_extrusion) {
+			gcode_speed(outputfile, printer, util_convertSpeed(printer, speed));
+			gcode_extrusion = true;
+			gcode_autoUp = false;
+		}
+	}
+}
+
 int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t printer, disk_t disk) {
 	FILE* file = fopen(path, "rb");
 	if (file == NULL) return 1;
@@ -224,27 +236,11 @@ int grammowav_wavToGcode(const char* path, const char* exportPath, printer_t pri
 		zPos += printer.diskLayerThickness;
 		if (fromCenter) {
 			for (double radius = holeRadius; radius <= diskRadius; radius += printer.lineDistance) {
-				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
-					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-					if (!gcode_extrusion) {
-						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
-						gcode_extrusion = true;
-						gcode_autoUp = false;
-					}
-				}
+				grammowav_circle(outputfile, printer, zPos, radius, printer.diskPrintSpeed);
 			}
 		} else {
 			for (double radius = diskRadius; radius >= holeRadius; radius -= printer.lineDistance) {
-				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
-					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-					if (!gcode_extrusion) {
-						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
-						gcode_extrusion = true;
-						gcode_autoUp = false;
-					}
-				}
+				grammowav_circle(outputfile, printer, zPos, radius, printer.diskPrintSpeed);
 			}
 		}
 		fromCenter = !fromCenter;

@@ -49,27 +49,11 @@ int membrane_generate(const char* exportPath, printer_t printer, membrane_t memb
 		zPos += printer.diskLayerThickness;
 		if (fromCenter) {
 			for (double radius = holeRadius; radius <= diskRadius; radius += printer.lineDistance) {
-				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
-					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-					if (!gcode_extrusion) {
-						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
-						gcode_extrusion = true;
-						gcode_autoUp = false;
-					}
-				}
+				grammowav_circle(outputfile, printer, zPos, radius, printer.diskPrintSpeed);
 			}
 		} else {
 			for (double radius = diskRadius; radius >= holeRadius; radius -= printer.lineDistance) {
-				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
-					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-					if (!gcode_extrusion) {
-						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.diskPrintSpeed));
-						gcode_extrusion = true;
-						gcode_autoUp = false;
-					}
-				}
+				grammowav_circle(outputfile, printer, zPos, radius, printer.diskPrintSpeed);
 			}
 		}
 		fromCenter = !fromCenter;
@@ -92,35 +76,43 @@ int membrane_generate(const char* exportPath, printer_t printer, membrane_t memb
 
 	// фигачу поршень
 	diskRadius = membrane.pistonDiameter / 2;
+	double flatLayer = zPos;
 	for (size_t layer = 0; layer < membrane.pistonLayers; layer++) {
 		zPos += printer.trackLayerThickness;
 		if (fromCenter) {
 			for (double radius = holeRadius; radius <= diskRadius; radius += printer.lineDistance) {
-				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
-					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-					if (!gcode_extrusion) {
-						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.trackPrintSpeed));
-						gcode_extrusion = true;
-						gcode_autoUp = false;
-					}
-				}
+				grammowav_circle(outputfile, printer, zPos, radius, printer.trackPrintSpeed);
 			}
 		} else {
 			for (double radius = diskRadius; radius >= holeRadius; radius -= printer.lineDistance) {
-				for (size_t i = 0; i < printer.circleFacesNumber; i++) {
-					double rotate = (((double)i) / ((double)(printer.circleFacesNumber - 1))) * M_PI * 2;
-					gcode_moveC(outputfile, printer, sin(rotate) * radius, cos(rotate) * -radius, zPos);
-					if (!gcode_extrusion) {
-						gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.trackPrintSpeed));
-						gcode_extrusion = true;
-						gcode_autoUp = false;
-					}
-				}
+				grammowav_circle(outputfile, printer, zPos, radius, printer.trackPrintSpeed);
 			}
 		}
 		fromCenter = !fromCenter;
 		gcode_extrusion = false;
+	}
+	gcode_extrusion = false;
+	gcode_speed(outputfile, printer, util_convertSpeed(printer, printer.fastMoveSpeed));
+
+	// фигачу уплотнитель
+	if (membrane.sealLayers > 0 && membrane.sealSize > 0) {
+		zPos = flatLayer;
+		diskRadius = membrane.membraneDiameter / 2;
+		double radius2 = diskRadius - membrane.sealSize;
+		for (size_t layer = 0; layer < membrane.sealLayers; layer++) {
+			zPos += printer.trackLayerThickness;
+			if (fromCenter) {
+				for (double radius = radius2; radius <= diskRadius; radius += printer.lineDistance) {
+					grammowav_circle(outputfile, printer, zPos, radius, printer.trackPrintSpeed);
+				}
+			} else {
+				for (double radius = diskRadius; radius >= radius2; radius -= printer.lineDistance) {
+					grammowav_circle(outputfile, printer, zPos, radius, printer.trackPrintSpeed);
+				}
+			}
+			fromCenter = !fromCenter;
+			gcode_extrusion = false;
+		}
 	}
 
 	gcode_extrusion = false;
