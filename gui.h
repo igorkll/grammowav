@@ -146,8 +146,8 @@ void save_membrane(gui_object* self, HWND hwnd) {
 
             .nozzleDiameter = 0.4,
             .filamentDiameter = 1.75,
-            .lineDistance = 0.4 * 0.95,
-            .circleFacesNumber = 256,
+            .lineDistance = 0.4 * 0.9,
+            .circleFacesNumber = 64,
 
             .diskLayerThickness = 0.3,
             .trackLayerThickness = 0.3,
