@@ -172,10 +172,10 @@ void save_membrane(gui_object* self, HWND hwnd) {
             .membraneDiameter = 58,
             .membraneLayers = 1,
 
-            .pistonDiameter = 40,
-            .pistonLayers = 2,
+            .pistonDiameter = 25,
+            .pistonLayers = 1,
 
-            .sealSize = 2,
+            .sealSize = 1,
             .sealLayers = 2
         };
 
