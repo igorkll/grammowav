@@ -149,7 +149,7 @@ void save_membrane(gui_object* self, HWND hwnd) {
             .lineDistance = 0.4 * 0.9,
             .circleFacesNumber = 64,
 
-            .diskLayerThickness = 0.3,
+            .diskLayerThickness = 0.2,
             .trackLayerThickness = 0.3,
 
             .diskExtrusionMultiplier = 1,
@@ -172,10 +172,10 @@ void save_membrane(gui_object* self, HWND hwnd) {
             .membraneDiameter = 58,
             .membraneLayers = 1,
 
-            .pistonDiameter = 25,
-            .pistonLayers = 1,
+            .pistonDiameter = 30,
+            .pistonLayers = 2,
 
-            .sealSize = 1,
+            .sealSize = 2,
             .sealLayers = 2
         };
 
